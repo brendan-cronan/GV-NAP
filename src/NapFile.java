@@ -9,5 +9,10 @@ class NapFile{
     FILE_NAME=name;
     DESCRIPTION=description;
   }
+  public boolean equals(NapFile other){
+    if(this.DESCRIPTION==other.DESCRIPTION && this.FILE_NAME==other.FILE_NAME)
+      return true;
+    return false;
+  }
 
 }

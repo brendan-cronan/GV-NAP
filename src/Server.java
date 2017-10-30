@@ -2,7 +2,8 @@ import java.util.*;
 
 class Server{
 
-  HashMap<Client,NapFile> fileList =new HashMap<Client,NapFile>();
+  HashMap<Client,ArrayList<NapFile>> fileList =new HashMap<Client,ArrayList<NapFile>>(100);
+  HashMap<NapFile,ArrayList<Client>> fileList =new HashMap<NapFile,ArrayList<Client>>(100);
   Server(){
 
   }

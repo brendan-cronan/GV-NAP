@@ -15,4 +15,14 @@ class Client{
     USERNAME=name;
     CONNECTION_TYPE=c;
   }
+
+  public boolean equals(Client c){
+    if(this.IP==c.IP && this.PORT_NUM==c.PORT_NUM && this.USERNAME==c.USERNAME
+    && this.CONNECTION_TYPE== c.CONNECTION_TYPE){
+      return true;
+    }
+    return false;
+  }
+
+
 }
