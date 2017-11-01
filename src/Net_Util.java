@@ -119,7 +119,6 @@ class Net_Util{
 
 
 
-//FIXME: return recieved int
   public static int recInt(Socket inSocket)throws IOException{
     String type="INT";
     String[] tokens;
@@ -131,7 +130,7 @@ class Net_Util{
       tokens=in.readLine().split("::");
       if(!type.equals(tokens[0])){
     	  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
-    	  return null;
+    	  return (Integer) null;
       }
       String message=tokens[1];
 
@@ -153,7 +152,11 @@ class Net_Util{
 	  while(tok.hasMoreTokens()) {
 		  list.add(Integer.parseInt(tok.nextToken()));
 	  }
-	  int[] arr = list.toArray();
+	  int[] arr = new int[list.size()];
+	  int count = 0;
+	  for(int i: list) {
+		  arr[count++] = i;
+	  }
 	  return arr;
   }
   
@@ -165,7 +168,7 @@ class Net_Util{
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
-		  return null;
+		  return (Boolean) null;
 	  }
 	  //FIXME:may not work
 	  bool = Boolean.parseBoolean(tokens[1]);
@@ -180,14 +183,14 @@ class Net_Util{
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
-		  return null;
+		  return (Double) null;
 	  }
 	  
 	  dub = Double.parseDouble(tokens[1]);
 	  return dub;
   }
   
-  public static boolean recString(Socket inSocket)throws IOException{
+  public static String recString(Socket inSocket)throws IOException{
 	  String type="STRING";
 	  BufferedReader in=getReader(inSocket);
 	  String[] tokens; 
@@ -213,7 +216,12 @@ class Net_Util{
 	  while(tok.hasMoreTokens()) {
 		  list.add(tok.nextToken());
 	  }
-	  String[] arr = list.toArray();
+	  String[] arr = new String[list.size()];
+	  int count = 0;
+	  for(String str: list) {
+		  arr[count++] = str;
+	  }
+
 	  return arr;
   }
   //The user must deCerealize this string on their own.  Hopefully they know
@@ -280,7 +288,6 @@ class Net_Util{
     return false;
   }
 
-  public static int
 
 
 
@@ -323,3 +330,4 @@ class Net_Util{
     }
 
   }
+
