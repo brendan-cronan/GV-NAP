@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.*;
+
 
 class Host extends JPanel{
 
@@ -11,7 +13,21 @@ class Host extends JPanel{
   private JPanel ConnectPane;
   private JPanel FilePane;
   private JPanel CmdPane;
-  private 
+
+  private JTextField serverName;
+  private JTextField portNum;
+  private JTextField userName;
+  private JTextField hostName;
+
+  private JButton connectButton;
+
+
+
+
+
+
+
+  private Socket serverSocket;
 
 
   public Host(){
@@ -26,6 +42,20 @@ class Host extends JPanel{
     this.add(ConnectPane);
     this.add(FilePane);
     this.add(CmdPane);
+
+
+    ClientListner listen =new ClientListner();
+    connectButton.addActionListener(listen);
+    connectButton.setActionCommand("CONNECT");
+
+
+
+
+
+
+
+
+
 
   }
 
@@ -70,6 +100,14 @@ class Host extends JPanel{
 
 		    //@Override
 		    public void actionPerformed(ActionEvent e) {
+          switch(e.getActionCommand().toLowerCase()){
+            case "command":
+
+              break;
+
+
+          }
+
 
         }
 
