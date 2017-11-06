@@ -30,7 +30,6 @@ class Server{
 			}
 	  }
   }
-
 class ClientHandler extends Thread {
 	Socket clientSocket;
 	String username, speed, hostname;
