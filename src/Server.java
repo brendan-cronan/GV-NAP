@@ -37,6 +37,7 @@ class ClientHandler extends Thread {
 	public ClientHandler(Socket socket) {
 		clientSocket = socket;
 		String[] clientData; 
+		
 		try {
 			clientData = Net_Util.recStrArr(clientSocket);
 		} catch (IOException e) {
