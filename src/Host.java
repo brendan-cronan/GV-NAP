@@ -6,11 +6,12 @@ class Host extends JPanel{
 
 
   private static final Dimension windowSize=new Dimension(500, 700);
-
+  private static final int PORT_NUM=6603;
 
   private JPanel ConnectPane;
   private JPanel FilePane;
   private JPanel CmdPane;
+  private 
 
 
   public Host(){
@@ -57,6 +58,10 @@ class Host extends JPanel{
     f.pack();
     f.setLocationRelativeTo(null);
     f.setVisible(true);
+
+
+
+
 
 
   }
