@@ -7,12 +7,13 @@ import java.net.*;
 class Host extends JPanel{
 
 
-  private static final Dimension windowSize=new Dimension(500, 700);
+  private static final Dimension windowSize=new Dimension(1000, 700);
   private static final int PORT_NUM=6603;
 
   private JPanel ConnectPane;
   private JPanel FilePane;
   private JPanel CmdPane;
+
 
   private JTextField serverName;
   private JTextField portNum;
@@ -33,28 +34,49 @@ class Host extends JPanel{
   public Host(){
     this.setLayout(new BorderLayout());
     this.setPreferredSize(windowSize);
-    //setBorder(BorderFactory.createCompoundBorder(
-    //                    BorderFactory.createTitledBorder(""),
-    //                    BorderFactory.createEmptyBorder(5,5,5,5)));
-    ConnectPane=new JPanel(new BorderLayout());
+    ConnectPane=new JPanel(new FlowLayout());
     FilePane=new JPanel(new BorderLayout());
     CmdPane=new JPanel(new BorderLayout());
-    this.add(ConnectPane);
-    this.add(FilePane);
-    this.add(CmdPane);
+
+    ConnectPane.setBorder(BorderFactory.createCompoundBorder(
+                       BorderFactory.createTitledBorder("Connect"),
+                       BorderFactory.createEmptyBorder(5,5,5,5)));
+
+
 
 
     ClientListner listen =new ClientListner();
+
+
+
+
+
+    serverName=new JTextField(20);
+    portNum=new JTextField(10);
+    userName=new JTextField(20);
+    hostName=new JTextField(20);
+
+    connectButton=new JButton("Connect");
     connectButton.addActionListener(listen);
     connectButton.setActionCommand("CONNECT");
 
 
+    ConnectPane.add(new JLabel("Name of Server:"));
+    ConnectPane.add(serverName);
+    ConnectPane.add(new JLabel("Port Number:"));
+    ConnectPane.add(portNum);
+    ConnectPane.add(new JLabel("Username:"));
+    ConnectPane.add(userName);
+    ConnectPane.add(new JLabel("Host Name:"));
+    ConnectPane.add(hostName);
+    ConnectPane.add(connectButton);
 
 
 
 
-
-
+    this.add(ConnectPane,BorderLayout.NORTH);
+    this.add(FilePane,BorderLayout.CENTER);
+    this.add(CmdPane,BorderLayout.SOUTH);
 
 
   }
@@ -98,11 +120,12 @@ class Host extends JPanel{
 
   private class ClientListner implements ActionListener {
 
+
 		    //@Override
 		    public void actionPerformed(ActionEvent e) {
           switch(e.getActionCommand().toLowerCase()){
-            case "command":
-
+            case "connect":
+              hostName.getText();
               break;
 
 
