@@ -76,6 +76,54 @@ class ClientHandler extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	public void run() {
+		boolean running = true;
+		String[] command;
+		while(running){
+			
+			try {
+			command = Net_Util.recString(clientSocket).split(" ");
+			
+			if(command[0].startsWith("search")) {
+				if(command.length == 1) {
+				Net_Util.send(clientSocket, fileMap.keySet().toArray());
+				} else if(command.length == 2) {
+					HashMap<NapFile,ArrayList<Client>> output =new HashMap<NapFile,ArrayList<Client>>(100);
+
+					
+					 Set<NapFile> x = clientMap.keySet();	
+					 for(NapFile y: x) {
+						 if(y.DESCRIPTION.contains(command[1])) {
+						 
+							 output.put(y,clientMap.get(y));
+						 }
+					 }
+					
+					 
+					for(Map.Entry<NapFile, ArrayList<Client>> out: output.entrySet()) {
+						for(Client ohmygod: out.getValue()) {
+							
+							
+							String[] sendMe = {out.getKey().FILE_NAME, ohmygod.USERNAME, ohmygod.CONNECTION_TYPE.toString()};
+							
+							Net_Util.send(clientSocket, sendMe);
+							
+						}
+						String[] endMessage={"Done Sending File Locations"};
+						Net_Util.send(clientSocket, endMessage);
+					}
+					
+					
+				}else {
+					//TODO: error handling
+				}
+			}
+			} catch(Exception e) {
+			}
+			
+	
+	}
 }
 
 
