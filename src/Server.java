@@ -87,7 +87,7 @@ class ClientHandler extends Thread {
 			
 			if(command[0].startsWith("search")) {
 				if(command.length == 1) {
-				Net_Util.send(clientSocket, fileMap.keySet().toArray());
+				Net_Util.send(clientSocket, (String[])fileMap.keySet().toArray());
 				} else if(command.length == 2) {
 					HashMap<NapFile,ArrayList<Client>> output =new HashMap<NapFile,ArrayList<Client>>(100);
 
