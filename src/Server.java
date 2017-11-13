@@ -31,6 +31,17 @@ class Server{
 	  }
   }
   
+  public void removeClient(Client client) {
+		for(NapFile file: fileMap.get(client)) {
+			clientMap.get(file).remove(client);
+			if(clientMap.get(file).isEmpty()) {
+				clientMap.remove(file);
+			}
+		}
+		fileMap.remove(client);
+	  }
+  
+  
 class ClientHandler extends Thread {
 
 	public static final int PORT = 6603;
@@ -119,18 +130,23 @@ class ClientHandler extends Thread {
 					//TODO: error handling
 				}
 			}
+			if(command[0].startsWith("quit")) {
+				removeClient(client);
+				clientSocket.close();
+				running = false;
+			}
 			} catch(Exception e) {
 			}
 			
 	
 	}
 }
-
-
-
-
-
 }
+
+
+
+
+
 
   public static void main(String[] args){
 Server s = new Server();
