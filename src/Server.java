@@ -7,10 +7,10 @@ class Server{
   private HashMap<Client,ArrayList<NapFile>> fileMap =new HashMap<Client,ArrayList<NapFile>>(100);
   private HashMap<NapFile,ArrayList<Client>> clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
   
-  Server(int port){
+  Server(){
 	  
 	  while(true) {
-	  Socket client = Net_Util.welcomeClient(port);
+	  Socket client = Net_Util.welcomeClient(PORT);
 	  
 	  
 	  ClientHandler handler =  new ClientHandler(client);
@@ -130,10 +130,12 @@ class ClientHandler extends Thread {
 
 
 
-
+}
 
   public static void main(String[] args){
-
+Server s = new Server();
   }
 
 }
+
+
