@@ -95,10 +95,10 @@ class Net_Util{
     String bool=(b) ? "True":"False";
     sendToServer("BOOL",bool,s);
   }
-  public static void send(Socket s, Object o){
-    if(o instanceof Cerealizable)
-      sendToServer("OBJ",o.cerealize(),s);
-  }
+  // public static void send(Socket s, Object o){
+  //   if(o instanceof Cerealizable)
+  //     sendToServer("OBJ",o.cerealize(),s);
+  // }
   public static void send(Socket s, double d){
     sendToServer("DOUBLE",d+"",s);
   }
@@ -137,12 +137,12 @@ class Net_Util{
 
       return Integer.parseInt(message);
   }
-  
+
   public static int[] recIntArr(Socket inSocket)throws IOException{
 	  String type="INTARR";
 	  BufferedReader in=getReader(inSocket);
 	  ArrayList<Integer> list = new ArrayList<>();
-	  String[] tokens; 
+	  String[] tokens;
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
@@ -159,12 +159,12 @@ class Net_Util{
 	  }
 	  return arr;
   }
-  
+
   public static boolean recBool(Socket inSocket)throws IOException{
 	  String type="BOOL";
 	  BufferedReader in=getReader(inSocket);
 	  boolean bool;
-	  String[] tokens; 
+	  String[] tokens;
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
@@ -174,26 +174,26 @@ class Net_Util{
 	  bool = Boolean.parseBoolean(tokens[1]);
 	  return bool;
   }
-  
+
   public static double recDouble(Socket inSocket)throws IOException{
 	  String type="DOUBLE";
 	  BufferedReader in=getReader(inSocket);
 	  double dub;
-	  String[] tokens; 
+	  String[] tokens;
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
 		  return (Double) null;
 	  }
-	  
+
 	  dub = Double.parseDouble(tokens[1]);
 	  return dub;
   }
-  
+
   public static String recString(Socket inSocket)throws IOException{
 	  String type="STRING";
 	  BufferedReader in=getReader(inSocket);
-	  String[] tokens; 
+	  String[] tokens;
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
@@ -201,12 +201,12 @@ class Net_Util{
 	  }
 	  return tokens[1];
   }
-  
+
   public static String[] recStrArr(Socket inSocket)throws IOException{
 	  String type="STRINGARR";
 	  BufferedReader in=getReader(inSocket);
 	  ArrayList<String> list = new ArrayList<>();
-	  String[] tokens; 
+	  String[] tokens;
 	  tokens=in.readLine().split("::");
 	  if(!type.equals(tokens[0])){
 		  System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
@@ -330,4 +330,3 @@ class Net_Util{
     }
 
   }
-
