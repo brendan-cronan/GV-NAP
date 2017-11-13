@@ -4,10 +4,11 @@ import java.awt.event.*;
 import java.net.*;
 
 
+
 class Host extends JPanel{
 
 
-  private static final Dimension windowSize=new Dimension(1000, 700);
+  private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
   private static final int PORT_NUM=6603;
 
   private JPanel ConnectPane;
@@ -19,6 +20,8 @@ class Host extends JPanel{
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
+  private JTextField connectionType;
+
 
   private JButton connectButton;
 
@@ -33,10 +36,21 @@ class Host extends JPanel{
 
   public Host(){
     this.setLayout(new BorderLayout());
-    this.setPreferredSize(windowSize);
+    this.setPreferredSize(WINDOW_SIZE);
     ConnectPane=new JPanel(new FlowLayout());
     FilePane=new JPanel(new BorderLayout());
     CmdPane=new JPanel(new BorderLayout());
+
+    /*
+    ConnectPane.setBackground(Color.RED);
+    FilePane.setBackground(Color.MAGENTA);
+    CmdPane.setBackground(Color.GREEN);
+    */
+
+    ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,120));
+    FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width,400));
+    CmdPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,200));
+
 
     ConnectPane.setBorder(BorderFactory.createCompoundBorder(
                        BorderFactory.createTitledBorder("Connect"),
@@ -55,6 +69,7 @@ class Host extends JPanel{
     portNum=new JTextField(10);
     userName=new JTextField(20);
     hostName=new JTextField(20);
+    connectionType=new JTextField(10);
 
     connectButton=new JButton("Connect");
     connectButton.addActionListener(listen);
