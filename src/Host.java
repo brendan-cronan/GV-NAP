@@ -16,6 +16,7 @@ class Host extends JPanel{
   private JPanel CmdPane;
 
   //These all belong to the Connect Pane
+  private JLabel errorDisplay;
   private JTextField serverName;
   private JTextField portNum;
   private JTextField userName;
@@ -41,7 +42,7 @@ class Host extends JPanel{
     this.setPreferredSize(WINDOW_SIZE);
 
     //JPanel Init
-    ConnectPane=new JPanel(new FlowLayout());
+    ConnectPane=new JPanel(new BorderLayout());
     FilePane=new JPanel(new BorderLayout());
     CmdPane=new JPanel(new BorderLayout());
 
@@ -71,6 +72,8 @@ class Host extends JPanel{
 
     //BEGIN: Connect Pane
 
+    errorDisplay=new JLabel("");
+    errorDisplay.setForeground(Color.RED);
     serverName=new JTextField(20);
     portNum=new JTextField(10);
     userName=new JTextField(20);
@@ -81,15 +84,26 @@ class Host extends JPanel{
     connectButton.addActionListener(listen);
     connectButton.setActionCommand("CONNECT");
 
-    ConnectPane.add(new JLabel("Name of Server:"));
-    ConnectPane.add(serverName);
-    ConnectPane.add(new JLabel("Port Number:"));
-    ConnectPane.add(portNum);
-    ConnectPane.add(new JLabel("Username:"));
-    ConnectPane.add(userName);
-    ConnectPane.add(new JLabel("Host Name:"));
-    ConnectPane.add(hostName);
-    ConnectPane.add(connectButton);
+    JPanel miniConnect=new JPanel(new FlowLayout());
+
+    miniConnect.add(new JLabel("Name of Server:"));
+    miniConnect.add(serverName);
+    miniConnect.add(new JLabel("Port Number:"));
+    miniConnect.add(portNum);
+    miniConnect.add(new JLabel("Username:"));
+    miniConnect.add(userName);
+    miniConnect.add(new JLabel("Host Name:"));
+    miniConnect.add(hostName);
+    miniConnect.add(connectButton);
+
+    ConnectPane.add(miniConnect,BorderLayout.CENTER);
+
+
+    Box box = new Box(BoxLayout.X_AXIS);
+		box.add(Box.createHorizontalGlue());
+		box.add(errorDisplay);
+		box.add(Box.createHorizontalGlue());
+    ConnectPane.add(box,BorderLayout.SOUTH);
 
     //END: Connect Pane
 
@@ -106,7 +120,7 @@ class Host extends JPanel{
     cmdDisplay.setEditable(false);
 
     cmdButton=new JButton("Go");
-    cmdButton.addActionListener(listen)
+    cmdButton.addActionListener(listen);
     cmdButton.setActionCommand("COMMAND");
 
     JPanel mini=new JPanel(new FlowLayout());
@@ -173,6 +187,8 @@ class Host extends JPanel{
 		    public void actionPerformed(ActionEvent e) {
           switch(e.getActionCommand().toLowerCase()){
             case "connect":
+              errorDisplay.setText("Please Try Again.");
+              //errorDisplay.setText("");
               hostName.getText();
               break;
 
