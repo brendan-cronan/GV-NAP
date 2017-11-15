@@ -15,19 +15,21 @@ class Host extends JPanel{
   private JPanel FilePane;
   private JPanel CmdPane;
 
-
+  //These all belong to the Connect Pane
   private JTextField serverName;
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
   private JTextField connectionType;
-
-
   private JButton connectButton;
 
+  //These all belong to the Search Pane
 
 
-
+  //These all belong to the Command Pane
+  private JTextField cmdField;
+  private JTextArea cmdDisplay;
+  private JButton cmdButton;
 
 
 
@@ -37,33 +39,37 @@ class Host extends JPanel{
   public Host(){
     this.setLayout(new BorderLayout());
     this.setPreferredSize(WINDOW_SIZE);
+
+    //JPanel Init
     ConnectPane=new JPanel(new FlowLayout());
     FilePane=new JPanel(new BorderLayout());
     CmdPane=new JPanel(new BorderLayout());
 
-    /*
+    /* To see the size of the panels
     ConnectPane.setBackground(Color.RED);
     FilePane.setBackground(Color.MAGENTA);
     CmdPane.setBackground(Color.GREEN);
     */
-
     ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,120));
     FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width,400));
     CmdPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,200));
 
-
     ConnectPane.setBorder(BorderFactory.createCompoundBorder(
-                       BorderFactory.createTitledBorder("Connect"),
-                       BorderFactory.createEmptyBorder(5,5,5,5)));
-
-
+      BorderFactory.createTitledBorder("Connect"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
+    FilePane.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createTitledBorder("Keyword Search"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
+    CmdPane.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createTitledBorder("FTP"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
 
 
     ClientListner listen =new ClientListner();
 
 
 
-
+    //BEGIN: Connect Pane
 
     serverName=new JTextField(20);
     portNum=new JTextField(10);
@@ -75,7 +81,6 @@ class Host extends JPanel{
     connectButton.addActionListener(listen);
     connectButton.setActionCommand("CONNECT");
 
-
     ConnectPane.add(new JLabel("Name of Server:"));
     ConnectPane.add(serverName);
     ConnectPane.add(new JLabel("Port Number:"));
@@ -86,6 +91,34 @@ class Host extends JPanel{
     ConnectPane.add(hostName);
     ConnectPane.add(connectButton);
 
+    //END: Connect Pane
+
+
+    // BEGIN: File Pane
+
+    // END: File Pane
+
+
+    // BEGIN: Command Pane
+    cmdField=new JTextField(70);
+    //HELLOO
+    cmdDisplay=new JTextArea(100,10);
+    cmdDisplay.setEditable(false);
+
+    cmdButton=new JButton("Go");
+    cmdButton.addActionListener(listen)
+    cmdButton.setActionCommand("COMMAND");
+
+    JPanel mini=new JPanel(new FlowLayout());
+    mini.add(cmdField);
+    mini.add(cmdButton);
+    CmdPane.add(mini,BorderLayout.NORTH);
+    CmdPane.add(cmdDisplay,BorderLayout.CENTER);
+
+
+
+
+    // END: Command Pane
 
 
 
