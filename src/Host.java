@@ -15,19 +15,22 @@ class Host extends JPanel{
   private JPanel FilePane;
   private JPanel CmdPane;
 
-
+  //These all belong to the Connect Pane
+  private JLabel errorDisplay;
   private JTextField serverName;
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
   private JTextField connectionType;
-
-
   private JButton connectButton;
 
+  //These all belong to the Search Pane
 
 
-
+  //These all belong to the Command Pane
+  private JTextField cmdField;
+  private JTextArea cmdDisplay;
+  private JButton cmdButton;
 
 
 
@@ -37,34 +40,40 @@ class Host extends JPanel{
   public Host(){
     this.setLayout(new BorderLayout());
     this.setPreferredSize(WINDOW_SIZE);
-    ConnectPane=new JPanel(new FlowLayout());
+
+    //JPanel Init
+    ConnectPane=new JPanel(new BorderLayout());
     FilePane=new JPanel(new BorderLayout());
     CmdPane=new JPanel(new BorderLayout());
 
-    /*
+    /* To see the size of the panels
     ConnectPane.setBackground(Color.RED);
     FilePane.setBackground(Color.MAGENTA);
     CmdPane.setBackground(Color.GREEN);
     */
-
     ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,120));
     FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width,400));
     CmdPane.setPreferredSize(new Dimension(WINDOW_SIZE.width,200));
 
-
     ConnectPane.setBorder(BorderFactory.createCompoundBorder(
-                       BorderFactory.createTitledBorder("Connect"),
-                       BorderFactory.createEmptyBorder(5,5,5,5)));
-
-
+      BorderFactory.createTitledBorder("Connect"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
+    FilePane.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createTitledBorder("Keyword Search"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
+    CmdPane.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createTitledBorder("FTP"),
+      BorderFactory.createEmptyBorder(5,5,5,5)));
 
 
     ClientListner listen =new ClientListner();
 
 
 
+    //BEGIN: Connect Pane
 
-
+    errorDisplay=new JLabel("");
+    errorDisplay.setForeground(Color.RED);
     serverName=new JTextField(20);
     portNum=new JTextField(10);
     userName=new JTextField(20);
@@ -75,17 +84,55 @@ class Host extends JPanel{
     connectButton.addActionListener(listen);
     connectButton.setActionCommand("CONNECT");
 
+    JPanel miniConnect=new JPanel(new FlowLayout());
 
-    ConnectPane.add(new JLabel("Name of Server:"));
-    ConnectPane.add(serverName);
-    ConnectPane.add(new JLabel("Port Number:"));
-    ConnectPane.add(portNum);
-    ConnectPane.add(new JLabel("Username:"));
-    ConnectPane.add(userName);
-    ConnectPane.add(new JLabel("Host Name:"));
-    ConnectPane.add(hostName);
-    ConnectPane.add(connectButton);
+    miniConnect.add(new JLabel("Name of Server:"));
+    miniConnect.add(serverName);
+    miniConnect.add(new JLabel("Port Number:"));
+    miniConnect.add(portNum);
+    miniConnect.add(new JLabel("Username:"));
+    miniConnect.add(userName);
+    miniConnect.add(new JLabel("Host Name:"));
+    miniConnect.add(hostName);
+    miniConnect.add(connectButton);
 
+    ConnectPane.add(miniConnect,BorderLayout.CENTER);
+
+
+    Box box = new Box(BoxLayout.X_AXIS);
+		box.add(Box.createHorizontalGlue());
+		box.add(errorDisplay);
+		box.add(Box.createHorizontalGlue());
+    ConnectPane.add(box,BorderLayout.SOUTH);
+
+    //END: Connect Pane
+
+
+    // BEGIN: File Pane
+
+    // END: File Pane
+
+
+    // BEGIN: Command Pane
+    cmdField=new JTextField(70);
+    //HELLOO
+    cmdDisplay=new JTextArea(100,10);
+    cmdDisplay.setEditable(false);
+
+    cmdButton=new JButton("Go");
+    cmdButton.addActionListener(listen);
+    cmdButton.setActionCommand("COMMAND");
+
+    JPanel mini=new JPanel(new FlowLayout());
+    mini.add(cmdField);
+    mini.add(cmdButton);
+    CmdPane.add(mini,BorderLayout.NORTH);
+    CmdPane.add(cmdDisplay,BorderLayout.CENTER);
+
+
+
+
+    // END: Command Pane
 
 
 
@@ -140,6 +187,8 @@ class Host extends JPanel{
 		    public void actionPerformed(ActionEvent e) {
           switch(e.getActionCommand().toLowerCase()){
             case "connect":
+              errorDisplay.setText("Please Try Again.");
+              //errorDisplay.setText("");
               hostName.getText();
               break;
 
