@@ -164,7 +164,7 @@ class Host extends JPanel {
 	
 
 	private boolean connect() {
-		boolean goodData = true;
+		boolean goodData = true, connectionEstablished = false;
 		String[] clientData = new String[3];
 		if (!userName.getText().isEmpty() && !hostName.getText().isEmpty() && !portNum.getText().isEmpty()) {
 			clientData[0] = userName.getText();
@@ -173,13 +173,14 @@ class Host extends JPanel {
 	}else {
 			goodData = false;
 		}
+		if (goodData)
 		try {
-		serverAddress = InetAddress.getByName(serverName.getText());
-		
-		} catch(UnknownHostException e) {
-			goodData = false;
+			serverSocket = new Socket(serverName.getText(), PORT_NUM);
+			connectionEstablished = true;
+		} catch(Exception e) {
+			
 		}
-		return goodData;
+		return connectionEstablished;
 	}
 }
 
