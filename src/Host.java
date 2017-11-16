@@ -10,6 +10,9 @@ class Host extends JPanel{
 
   private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
   private static final int PORT_NUM=6603;
+  private static final String[] CONN_TYPE=new String[]{
+    "Ethernet","Modem","T1","T3"
+  };
 
   private JPanel ConnectPane;
   private JPanel FilePane;
@@ -21,10 +24,14 @@ class Host extends JPanel{
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
-  private JTextField connectionType;
+  private JComboBox connectionType;
   private JButton connectButton;
 
   //These all belong to the Search Pane
+  private JTextField searchField;
+
+
+
 
 
   //These all belong to the Command Pane
@@ -78,7 +85,7 @@ class Host extends JPanel{
     portNum=new JTextField(10);
     userName=new JTextField(20);
     hostName=new JTextField(20);
-    connectionType=new JTextField(10);
+    connectionType=new JComboBox(CONN_TYPE);
 
     connectButton=new JButton("Connect");
     connectButton.addActionListener(listen);
@@ -187,8 +194,10 @@ class Host extends JPanel{
 		    public void actionPerformed(ActionEvent e) {
           switch(e.getActionCommand().toLowerCase()){
             case "connect":
-              errorDisplay.setText("Please Try Again.");
+              //errorDisplay.setText("Please Try Again.");
               //errorDisplay.setText("");
+              //connectionType.getSelectedIndex();  <-- returns an int
+              //then do CONN_TYPE[index];
               hostName.getText();
               break;
 
