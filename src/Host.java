@@ -24,7 +24,7 @@ class Host extends JPanel{
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
-  private JComboBox connectionType;
+  private JComboBox<String> connectionType;
   private JButton connectButton;
 
   //These all belong to the Search Pane
@@ -85,7 +85,7 @@ class Host extends JPanel{
     portNum=new JTextField(10);
     userName=new JTextField(20);
     hostName=new JTextField(20);
-    connectionType=new JComboBox(CONN_TYPE);
+    connectionType=new JComboBox<String>(CONN_TYPE);
 
     connectButton=new JButton("Connect");
     connectButton.addActionListener(listen);
@@ -101,6 +101,7 @@ class Host extends JPanel{
     miniConnect.add(userName);
     miniConnect.add(new JLabel("Host Name:"));
     miniConnect.add(hostName);
+    miniConnect.add(connectionType);
     miniConnect.add(connectButton);
 
     ConnectPane.add(miniConnect,BorderLayout.CENTER);
