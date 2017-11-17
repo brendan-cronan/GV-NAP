@@ -46,6 +46,9 @@ class Host extends JPanel{
   private String[][] fileData;
   private String[][] clientData;
 
+  private JButton searchButton;
+
+
 
 
 
@@ -154,21 +157,8 @@ class Host extends JPanel{
     // END: File Pane
 
 
-    // BEGIN: Command Pane
-    cmdField=new JTextField(70);
-    //HELLOO
-    cmdDisplay=new JTextArea(100,10);
-    cmdDisplay.setEditable(false);
-
-		// END: Connect Pane
-
-		// BEGIN: File Pane
-
-		// END: File Pane
-
 		// BEGIN: Command Pane
 		cmdField = new JTextField(70);
-		// HELLOO
 		cmdDisplay = new JTextArea(100, 10);
 		cmdDisplay.setEditable(false);
 
@@ -201,15 +191,7 @@ class Host extends JPanel{
       fileData[i][1]=n.DESCRIPTION;
       i++;
     }
-
-
-
-
     fileTable=new JTable(fileData,colNames);
-
-
-
-
 
   }
 
@@ -227,10 +209,7 @@ class Host extends JPanel{
 
       i++;
     }
-
     clientTable=new JTable(clientData,clientColNames);
-
-
   }
 
 
