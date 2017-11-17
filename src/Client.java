@@ -9,7 +9,11 @@ class Client{
   public final String USERNAME;
   public final String CONNECTION_TYPE;
 
+<<<<<<< HEAD
   public Client(InetAddress ip,String name,String connectionType){
+=======
+  public Client(InetAddress ip,int port,String name,String connectionType){
+>>>>>>> origin/bd_client
     IP=ip;
     USERNAME=name;
     CONNECTION_TYPE=connectionType;
