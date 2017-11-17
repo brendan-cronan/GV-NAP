@@ -212,14 +212,14 @@ class Host extends JPanel{
     clientData=new String[clientList.size()][3];
     int i=0;
     for(Client c:clientList){
-      clientData[i][0]=c.
-      clientData[i][1]=
-      clientData[i][2]=
+      clientData[i][0]=c.CONNECTION_TYPE;
+      clientData[i][1]=c.USERNAME;
+      clientData[i][2]=c.IP.toString();
 
       i++;
     }
 
-
+    clientTable=new JTable(clientData,clientColNames);
 
 
   }
