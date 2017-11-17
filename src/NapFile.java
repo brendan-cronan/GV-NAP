@@ -15,4 +15,7 @@ class NapFile{
     return false;
   }
 
+  public String toString() {
+	  return(FILE_NAME  + "::" + DESCRIPTION);
+  }
 }
