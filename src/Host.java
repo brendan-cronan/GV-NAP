@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.*;
+import java.util.*;
 
 
 
@@ -189,11 +190,6 @@ class Host extends JPanel{
 
 	}
 
-	public static void main(String[] args) {
-		JFrame f = new JFrame("GV-NAPSTER PROGRAM");
-		Host h = new Host();
-
-  }
 
 
   private void initFileTable(ArrayList<NapFile> fileList){
@@ -287,14 +283,14 @@ class Host extends JPanel{
 
 	}
 
-	
+
 
 	private boolean connect() {
 		boolean goodData = true, connectionEstablished = false;
 		String[] clientData = new String[3];
 		if (!userName.getText().isEmpty() && !hostName.getText().isEmpty() && !portNum.getText().isEmpty()) {
 			clientData[0] = userName.getText();
-			clientData[1] = connectionType.getText();
+			clientData[1] = CONN_TYPE[connectionType.getSelectedIndex()];
 			clientData[2] = hostName.getText();
 	}else {
 			goodData = false;
