@@ -108,10 +108,18 @@ class Host extends JPanel {
     clientTable=new JTable();
     fileTable.setVisible(false);
     clientTable.setVisible(false);
+
     textPanel.add(new JLabel("Search:"));
     textPanel.add(searchField);
+
     tablePanel.add(fileTable,BorderLayout.WEST);
     tablePanel.add(clientTable,BorderLayout.EAST);
+
+
+
+
+
+
     FilePane.add(textPanel,BorderLayout.NORTH);
     FilePane.add(tablePanel,BorderLayout.CENTER);
 
