@@ -1,13 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.net.*;
+import java.util.*;
+import java.io.*;
 
 class Host extends JPanel {
 
 	private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
 	private static final int PORT_NUM = 6603;
+	private static final String[] CONN_TYPE = new String[] { "Ethernet", "Modem", "T1", "T3" };
 
 	private JPanel ConnectPane;
 	private JPanel FilePane;
@@ -19,18 +21,19 @@ class Host extends JPanel {
 	private JTextField portNum;
 	private JTextField userName;
 	private JTextField hostName;
-	private JTextField connectionType;
+	private JComboBox<String> connectionType;
 	private JButton connectButton;
 
 	// These all belong to the Search Pane
+	private JTextField searchField;
 
 	// These all belong to the Command Pane
 	private JTextField cmdField;
 	private JTextArea cmdDisplay;
 	private JButton cmdButton;
 
-	private InetAddress serverAddress;
 	private Socket serverSocket;
+	ArrayList<NapFile> files = new ArrayList<NapFile>();
 
 	public Host() {
 		this.setLayout(new BorderLayout());
@@ -66,7 +69,7 @@ class Host extends JPanel {
 		portNum = new JTextField(10);
 		userName = new JTextField(20);
 		hostName = new JTextField(20);
-		connectionType = new JTextField(10);
+		connectionType = new JComboBox<String>(CONN_TYPE);
 
 		connectButton = new JButton("Connect");
 		connectButton.addActionListener(listen);
@@ -82,6 +85,7 @@ class Host extends JPanel {
 		miniConnect.add(userName);
 		miniConnect.add(new JLabel("Host Name:"));
 		miniConnect.add(hostName);
+		miniConnect.add(connectionType);
 		miniConnect.add(connectButton);
 
 		ConnectPane.add(miniConnect, BorderLayout.CENTER);
@@ -146,13 +150,13 @@ class Host extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand().toLowerCase()) {
 			case "connect":
-				if(connect()) {
+				if (connect()) {
 					errorDisplay.setText("");
-					
+
 				} else {
 					errorDisplay.setText("Please Try Again.");
 				}
-				
+
 				break;
 
 			}
@@ -161,29 +165,69 @@ class Host extends JPanel {
 
 	}
 
-	
+	private void makeFileList() {
+
+		boolean fileExists;
+		File localStorage = new File("./SharedFiles");
+
+		File fileList = new File("./SharedFiles/FileList.txt");
+		if (fileList.exists()) {
+			FileInputStream fileStream;
+			try {
+				fileStream = new FileInputStream(fileList);
+
+				String string;
+				String[] split;
+				BufferedReader inData = new BufferedReader(new InputStreamReader(fileStream));
+				while ((string = inData.readLine()) != null) {
+					split = string.split("::");
+					files.add(new NapFile(split[0], split[1]));
+
+				}
+				File[] localFiles = localStorage.listFiles();
+				for (NapFile n : files) {
+					fileExists = false;
+					for (File f : localFiles) {
+						if (n.FILE_NAME.equals(f.getName())) {
+							fileExists = true;
+						}
+					}
+					if (!fileExists) {
+						files.remove(n);
+					}
+				}
+				inData.close();
+			} catch (IOException e) {
+				try {
+					fileList.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+		//initFileTable();
+	}
 
 	private boolean connect() {
 		boolean goodData = true, connectionEstablished = false;
 		String[] clientData = new String[3];
 		if (!userName.getText().isEmpty() && !hostName.getText().isEmpty() && !portNum.getText().isEmpty()) {
 			clientData[0] = userName.getText();
-			clientData[1] = connectionType.getText();
+			clientData[1] = CONN_TYPE[connectionType.getSelectedIndex()];
 			clientData[2] = hostName.getText();
-	}else {
+			// connectionType.getSelectedIndex(); <-- returns an int
+			// then do CONN_TYPE[index];
+		} else {
 			goodData = false;
 		}
 		if (goodData)
-		try {
-			serverSocket = new Socket(serverName.getText(), PORT_NUM);
-			connectionEstablished = true;
-		} catch(Exception e) {
-			
-		}
+			try {
+				serverSocket = new Socket(serverName.getText(), PORT_NUM);
+				connectionEstablished = true;
+			} catch (Exception e) {
+
+			}
 		return connectionEstablished;
 	}
+
 }
-
-
-
-
