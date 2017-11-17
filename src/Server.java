@@ -46,14 +46,13 @@ class ClientHandler extends Thread {
 
 	public static final int PORT = 6603;
 	Socket clientSocket;
-	String username, hostname;
+	String username, hostname, connectionType;
 	Client client;
 	public ClientHandler(Socket socket) {
 		clientSocket = socket;
 		String[] clientData = new String[0];
 		String[] clientFileData = new String[0];
-		String connectionType;
-		ConnectionType connection;
+		
 		
 		try {
 			while(clientData.length == 0) {
@@ -61,17 +60,8 @@ class ClientHandler extends Thread {
 			}
 			username = clientData[0];
 			connectionType = clientData[1];
-			if(connectionType.equalsIgnoreCase("ethernet")) {
-				connection = ConnectionType.Ethernet;
-			}else if(connectionType.equalsIgnoreCase("Modem")) {
-				connection = ConnectionType.Modem;
-			}else if(connectionType.equalsIgnoreCase("T1")) {
-				connection = ConnectionType.T1;
-			}else  {
-				connection = ConnectionType.T3;
-			}
 			hostname = clientData[2];
-			client = new Client(clientSocket.getInetAddress(), PORT, username, connection);
+			client = new Client(clientSocket.getInetAddress(), PORT, username, connectionType);
 			Net_Util.send(clientSocket, "Client ID Recieved");
 			while(clientFileData.length == 0) {
 				clientFileData = Net_Util.recStrArr(clientSocket);
@@ -91,6 +81,7 @@ class ClientHandler extends Thread {
 	public void run() {
 		boolean running = true;
 		String[] command;
+		ArrayList<String> results = new ArrayList<String>();
 		while(running){
 			
 			try {
@@ -98,32 +89,32 @@ class ClientHandler extends Thread {
 			
 			if(command[0].startsWith("search")) {
 				if(command.length == 1) {
-				Net_Util.send(clientSocket, (String[])fileMap.keySet().toArray());
+					for(NapFile file: clientMap.keySet()) {
+						for(Client client : clientMap.get(file)) {
+							results.add(file.FILE_NAME + "::" + client.USERNAME + "::" + client.CONNECTION_TYPE);
+						}
+					}
 				} else if(command.length == 2) {
 					HashMap<NapFile,ArrayList<Client>> output =new HashMap<NapFile,ArrayList<Client>>(100);
 
 					
 					 Set<NapFile> x = clientMap.keySet();	
-					 for(NapFile y: x) {
-						 if(y.DESCRIPTION.contains(command[1])) {
-						 
-							 output.put(y,clientMap.get(y));
+					 for(NapFile file: clientMap.keySet()) {
+						 if(file.DESCRIPTION.contains(command[1])) {
+							 for(Client client: clientMap.get(file))
+								 results.add(file.FILE_NAME + "::" + client.USERNAME + "::" + client.CONNECTION_TYPE);
 						 }
 					 }
 					
 					 
-					for(Map.Entry<NapFile, ArrayList<Client>> out: output.entrySet()) {
-						for(Client ohmygod: out.getValue()) {
-							
-							
-							String[] sendMe = {out.getKey().FILE_NAME, ohmygod.USERNAME, ohmygod.CONNECTION_TYPE.toString()};
-							
-							Net_Util.send(clientSocket, sendMe);
-							
-						}
-						String[] endMessage={"Done Sending File Locations"};
-						Net_Util.send(clientSocket, endMessage);
+					if(results.isEmpty()) {
+						
+						String[] message={"No results found"};
+					} else {
+						String [] message = (String[])results.toArray();
+						Net_Util.send(clientSocket, message);
 					}
+					
 					
 					
 				}else {

@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.*;
 
 
@@ -10,6 +11,9 @@ class Host extends JPanel{
 
   private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
   private static final int PORT_NUM=6603;
+  private static final String[] CONN_TYPE=new String[]{
+    "Ethernet","Modem","T1","T3"
+  };
 
   private JPanel ConnectPane;
   private JPanel FilePane;
@@ -21,10 +25,29 @@ class Host extends JPanel{
   private JTextField portNum;
   private JTextField userName;
   private JTextField hostName;
-  private JTextField connectionType;
+  private JComboBox<String> connectionType;
   private JButton connectButton;
 
+
+
+
+
+
   //These all belong to the Search Pane
+  private JTextField searchField;
+  private JTable fileTable;
+  private JTable clientTable;
+
+  private static final String[] colNames=new String[]{
+    "File" , "Description" };
+  private static final String[] clientColNames=new String[]{
+    "Speed" , "Username", "IP" };
+  private String[][] fileData;
+  private String[][] clientData;
+
+
+
+
 
 
   //These all belong to the Command Pane
@@ -78,7 +101,7 @@ class Host extends JPanel{
     portNum=new JTextField(10);
     userName=new JTextField(20);
     hostName=new JTextField(20);
-    connectionType=new JTextField(10);
+    connectionType=new JComboBox<String>(CONN_TYPE);
 
     connectButton=new JButton("Connect");
     connectButton.addActionListener(listen);
@@ -94,6 +117,7 @@ class Host extends JPanel{
     miniConnect.add(userName);
     miniConnect.add(new JLabel("Host Name:"));
     miniConnect.add(hostName);
+    miniConnect.add(connectionType);
     miniConnect.add(connectButton);
 
     ConnectPane.add(miniConnect,BorderLayout.CENTER);
@@ -109,6 +133,22 @@ class Host extends JPanel{
 
 
     // BEGIN: File Pane
+    searchField=new JTextField(40);
+    JPanel tablePanel=new JPanel(new BorderLayout());
+    JPanel textPanel=new JPanel(new FlowLayout());
+
+    fileTable = new JTable();
+    clientTable=new JTable();
+    fileTable.setVisible(false);
+    clientTable.setVisible(false);
+    textPanel.add(new JLabel("Search:"));
+    textPanel.add(searchField);
+    tablePanel.add(fileTable,BorderLayout.WEST);
+    tablePanel.add(clientTable,BorderLayout.EAST);
+    FilePane.add(textPanel,BorderLayout.NORTH);
+    FilePane.add(tablePanel,BorderLayout.CENTER);
+
+
 
     // END: File Pane
 
@@ -119,32 +159,83 @@ class Host extends JPanel{
     cmdDisplay=new JTextArea(100,10);
     cmdDisplay.setEditable(false);
 
-    cmdButton=new JButton("Go");
-    cmdButton.addActionListener(listen);
-    cmdButton.setActionCommand("COMMAND");
+		// END: Connect Pane
 
-    JPanel mini=new JPanel(new FlowLayout());
-    mini.add(cmdField);
-    mini.add(cmdButton);
-    CmdPane.add(mini,BorderLayout.NORTH);
-    CmdPane.add(cmdDisplay,BorderLayout.CENTER);
+		// BEGIN: File Pane
+
+		// END: File Pane
+
+		// BEGIN: Command Pane
+		cmdField = new JTextField(70);
+		// HELLOO
+		cmdDisplay = new JTextArea(100, 10);
+		cmdDisplay.setEditable(false);
+
+		cmdButton = new JButton("Go");
+		cmdButton.addActionListener(listen);
+		cmdButton.setActionCommand("COMMAND");
+
+		JPanel mini = new JPanel(new FlowLayout());
+		mini.add(cmdField);
+		mini.add(cmdButton);
+		CmdPane.add(mini, BorderLayout.NORTH);
+		CmdPane.add(cmdDisplay, BorderLayout.CENTER);
+
+		// END: Command Pane
+
+		this.add(ConnectPane, BorderLayout.NORTH);
+		this.add(FilePane, BorderLayout.CENTER);
+		this.add(CmdPane, BorderLayout.SOUTH);
+
+	}
+
+	public static void main(String[] args) {
+		JFrame f = new JFrame("GV-NAPSTER PROGRAM");
+		Host h = new Host();
+
+  }
+
+
+  private void initFileTable(ArrayList<NapFile> fileList){
+    fileData=new String[fileList.size()][2];
+
+    int i=0;
+    for(NapFile n:fileList){
+      fileData[i][0]=n.FILE_NAME;
+      fileData[i][1]=n.DESCRIPTION;
+      i++;
+    }
 
 
 
 
-    // END: Command Pane
+    fileTable=new JTable(fileData,colNames);
 
 
 
-    this.add(ConnectPane,BorderLayout.NORTH);
-    this.add(FilePane,BorderLayout.CENTER);
-    this.add(CmdPane,BorderLayout.SOUTH);
 
 
   }
 
 
 
+
+
+  private void initClientTable(ArrayList<Client> clientList){
+    clientData=new String[clientList.size()][3];
+    int i=0;
+    for(Client c:clientList){
+      clientData[i][0]=c.CONNECTION_TYPE;
+      clientData[i][1]=c.USERNAME;
+      clientData[i][2]=c.IP.toString();
+
+      i++;
+    }
+
+    clientTable=new JTable(clientData,clientColNames);
+
+
+  }
 
 
 
@@ -167,43 +258,54 @@ class Host extends JPanel{
 		box.add(h);
 		box.add(Box.createVerticalGlue());
 		f.getContentPane().add(box);
-    //sets up Jframe
-    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    f.pack();
-    f.setLocationRelativeTo(null);
-    f.setVisible(true);
+		// sets up Jframe
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.pack();
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
 
+	}
 
+	private class ClientListner implements ActionListener {
 
+		// @Override
+		public void actionPerformed(ActionEvent e) {
+			switch (e.getActionCommand().toLowerCase()) {
+			case "connect":
+				if(connect()) {
+					errorDisplay.setText("");
 
+				} else {
+					errorDisplay.setText("Please Try Again.");
+				}
 
+				break;
 
-  }
+			}
 
-  private class ClientListner implements ActionListener {
+		}
 
+	}
 
-		    //@Override
-		    public void actionPerformed(ActionEvent e) {
-          switch(e.getActionCommand().toLowerCase()){
-            case "connect":
-              errorDisplay.setText("Please Try Again.");
-              //errorDisplay.setText("");
-              hostName.getText();
-              break;
+	
 
+	private boolean connect() {
+		boolean goodData = true, connectionEstablished = false;
+		String[] clientData = new String[3];
+		if (!userName.getText().isEmpty() && !hostName.getText().isEmpty() && !portNum.getText().isEmpty()) {
+			clientData[0] = userName.getText();
+			clientData[1] = connectionType.getText();
+			clientData[2] = hostName.getText();
+	}else {
+			goodData = false;
+		}
+		if (goodData)
+		try {
+			serverSocket = new Socket(serverName.getText(), PORT_NUM);
+			connectionEstablished = true;
+		} catch(Exception e) {
 
-          }
-
-
-        }
-
-
-
-
-
-
-
-
-  }
+		}
+		return connectionEstablished;
+	}
 }
