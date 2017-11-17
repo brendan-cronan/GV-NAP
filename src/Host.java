@@ -27,8 +27,23 @@ class Host extends JPanel{
   private JComboBox<String> connectionType;
   private JButton connectButton;
 
+
+
+
+
+
   //These all belong to the Search Pane
   private JTextField searchField;
+  private JTable fileTable;
+  private JTable clientTable;
+
+  private static final String[] colNames=new String[]{
+    "File" , "Description" };
+  private static final String[] clientColNames=new String[]{
+    "Speed" , "Username", "IP" };
+  private String[][] fileData;
+  private String[][] clientData;
+
 
 
 
@@ -117,6 +132,22 @@ class Host extends JPanel{
 
 
     // BEGIN: File Pane
+    searchField=new JTextField(40);
+    JPanel tablePanel=new JPanel(new BorderLayout());
+    JPanel textPanel=new JPanel(new FlowLayout());
+
+    fileTable = new JTable();
+    clientTable=new JTable();
+    fileTable.setVisible(false);
+    clientTable.setVisible(false);
+    textPanel.add(new JLabel("Search:"));
+    textPanel.add(searchField);
+    tablePanel.add(fileTable,BorderLayout.WEST);
+    tablePanel.add(clientTable,BorderLayout.EAST);
+    FilePane.add(textPanel,BorderLayout.NORTH);
+    FilePane.add(tablePanel,BorderLayout.CENTER);
+
+
 
     // END: File Pane
 
@@ -152,7 +183,46 @@ class Host extends JPanel{
   }
 
 
+  private void initFileTable(ArrayList<NapFile> fileList){
+    fileData=new String[fileList.size()][2];
 
+    int i=0;
+    for(NapFile n:fileList){
+      fileData[i][0]=n.FILE_NAME;
+      fileData[i][1]=n.DESCRIPTION;
+      i++;
+    }
+
+
+
+
+    fileTable=new JTable(fileData,colNames);
+
+
+
+
+
+  }
+
+
+
+
+
+  private void initClientTable(ArrayList<Client> clientList){
+    clientData=new String[clientList.size()][3];
+    int i=0;
+    for(Client c:clientList){
+      clientData[i][0]=c.
+      clientData[i][1]=
+      clientData[i][2]=
+
+      i++;
+    }
+
+
+
+
+  }
 
 
 
@@ -199,6 +269,24 @@ class Host extends JPanel{
               //errorDisplay.setText("");
               //connectionType.getSelectedIndex();  <-- returns an int
               //then do CONN_TYPE[index];
+              /*
+              *   In order to add to the JTables...
+              *   First, initialize the String[][] fileData
+              *   to hold all the files and their descriptions
+              *   ex.   fileData=new String[10][2]
+              *         fileData[0][0]="Name of File1"
+              *         fileData[0][1]="Description of File1"
+              *         etc...
+              *
+              *   Then, do the same for String[][] clientData
+              *   Next, set fileTable and clientTable to...
+              *      fileTable = new JTable(fileData,colNames);
+              *      clientTable= new JTable(clientData,clientColNames);
+              *   Finally,
+              *   set each table to visible with
+              *       fileTable.setVisible(true);
+              *
+              */
               hostName.getText();
               break;
 
