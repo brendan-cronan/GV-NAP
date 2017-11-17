@@ -6,13 +6,13 @@ class Server{
 	public static final int PORT = 6603;
   private HashMap<Client,ArrayList<NapFile>> fileMap =new HashMap<Client,ArrayList<NapFile>>(100);
   private HashMap<NapFile,ArrayList<Client>> clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
-  
+
   Server(){
-	  
+
 	  while(true) {
 	  Socket client = Net_Util.welcomeClient(PORT);
-	  
-	  
+
+
 	  ClientHandler handler =  new ClientHandler(client);
 	  System.out.println("Connection Established.");
 	  handler.start();
@@ -30,7 +30,7 @@ class Server{
 			}
 	  }
   }
-  
+
   public void removeClient(Client client) {
 		for(NapFile file: fileMap.get(client)) {
 			clientMap.get(file).remove(client);
@@ -40,8 +40,8 @@ class Server{
 		}
 		fileMap.remove(client);
 	  }
-  
-  
+
+
 class ClientHandler extends Thread {
 
 	public static final int PORT = 6603;
@@ -52,8 +52,8 @@ class ClientHandler extends Thread {
 		clientSocket = socket;
 		String[] clientData = new String[0];
 		String[] clientFileData = new String[0];
-		
-		
+
+
 		try {
 			while(clientData.length == 0) {
 				clientData = Net_Util.recStrArr(clientSocket);
@@ -77,16 +77,16 @@ class ClientHandler extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void run() {
 		boolean running = true;
 		String[] command;
 		ArrayList<String> results = new ArrayList<String>();
 		while(running){
-			
+
 			try {
 			command = Net_Util.recString(clientSocket).split(" ");
-			
+
 			if(command[0].startsWith("search")) {
 				if(command.length == 1) {
 					for(NapFile file: clientMap.keySet()) {
@@ -97,26 +97,26 @@ class ClientHandler extends Thread {
 				} else if(command.length == 2) {
 					HashMap<NapFile,ArrayList<Client>> output =new HashMap<NapFile,ArrayList<Client>>(100);
 
-					
-					 Set<NapFile> x = clientMap.keySet();	
+
+					 Set<NapFile> x = clientMap.keySet();
 					 for(NapFile file: clientMap.keySet()) {
 						 if(file.DESCRIPTION.contains(command[1])) {
 							 for(Client client: clientMap.get(file))
 								 results.add(file.FILE_NAME + "::" + client.USERNAME + "::" + client.CONNECTION_TYPE);
 						 }
 					 }
-					
-					 
+
+
 					if(results.isEmpty()) {
-						
+
 						String[] message={"No results found"};
 					} else {
 						String [] message = (String[])results.toArray();
 						Net_Util.send(clientSocket, message);
 					}
-					
-					
-					
+
+
+
 				}else {
 					//TODO: error handling
 				}
@@ -128,8 +128,8 @@ class ClientHandler extends Thread {
 			}
 			} catch(Exception e) {
 			}
-			
-	
+
+
 	}
 }
 }
@@ -144,5 +144,3 @@ Server s = new Server();
   }
 
 }
-
-
