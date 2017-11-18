@@ -26,4 +26,6 @@ class Client{
   }
 
   // client to client comment
+  
+  //time to test if I have commitment issues -Dan S
 }

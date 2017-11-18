@@ -1,7 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 
 
@@ -179,6 +185,43 @@ class Host extends JPanel{
 
 
   }
+  
+ private void requestFile(String fileName, Client fileOwner){
+	 try{
+		 Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
+		 Net_Util.send(OwnerSocket, fileName);
+		
+		 
+		 try{
+			 
+			 File localCopy = new File("./sharingFiles/" + fileName);
+			 FileOutputStream writer = new FileOutputStream(localCopy);
+			 String[] contents = Net_Util.recStrArr(OwnerSocket);
+			 
+			 if(localCopy.createNewFile()){
+				 for(String lineContent: contents){
+					 byte[] cont = lineContent.getBytes();
+					 writer.write(cont);
+				 }
+				 
+				 
+			 }
+			 
+			 
+			 
+			 
+		 }catch(Exception e){
+			 System.out.println("Problem sending request");
+		 }
+		 
+		 
+		 
+	 }catch(Exception e){
+		 System.out.println("couldn't send request");
+	 }
+	 
+	 
+ }
 
   private class ClientListner implements ActionListener {
 
@@ -191,19 +234,66 @@ class Host extends JPanel{
               //errorDisplay.setText("");
               hostName.getText();
               break;
+            //FIXME: add case starts with retrieve
+            // 
 
 
           }
 
 
         }
-
-
-
+		    
+		    
+		    
+		    
 
 
 
 
 
   }
+  
+  
+  
 }
+
+
+
+ class clientRun implements Runnable{
+
+	@Override
+	public void run() {
+		
+		while (true){
+			try{
+			Socket requester = Net_Util.welcomeClient(6603);
+			String requestedFile = Net_Util.recString(requester);
+			File readFile = new File("./sharingFiles/" + requestedFile);
+			InputStream reader = new FileInputStream(readFile);
+			ArrayList<String> content = new ArrayList<String>();
+			
+			BufferedReader bufRead = new BufferedReader(new InputStreamReader(reader));
+			String lineContent = bufRead.readLine();
+			while(null != lineContent){
+				content.add(lineContent);
+				lineContent = bufRead.readLine();
+			}
+			String[] sendFile = (String[])content.toArray();
+			 Net_Util.send(requester, sendFile);
+			 requester.close();
+			 reader.close();
+			 bufRead.close();
+			 
+			
+		}
+			catch(Exception e){
+				System.out.println("Issue receiving connection");
+			}
+		
+	}
+	
+	
+	
+	
+}
+ }
