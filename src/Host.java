@@ -131,7 +131,8 @@ class Host extends JPanel{
     f.pack();
     f.setLocationRelativeTo(null);
     f.setVisible(true);
-
+    clientRun cSpot = new clientRun();
+    cSpot.run();
 
 
 
@@ -185,27 +186,16 @@ class Host extends JPanel{
             case "connect":
               hostName.getText();
               break;
-            //FIXME: add case starts with retrieve
-            // 
+            
+            case "retrieve":
+            	//FIXME: requestFile() needs two input parameters: a file name and a client object.
+            	//We need some way to get that information out of the GUI.
+            	//example: requestFile(fileName, clientToRetrieveFrom);
 
 
           }
-
-
         }
-		    
-		    
-		    
-		    
-
-
-
-
-
   }
-  
-  
-  
 }
 
 
