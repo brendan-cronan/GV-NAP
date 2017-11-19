@@ -188,6 +188,7 @@ class Host extends JPanel{
   
  private void requestFile(String fileName, Client fileOwner){
 	 try{
+		 //FIXME POTENTIAL ISSUE
 		 Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
 		 Net_Util.send(OwnerSocket, fileName);
 		
@@ -203,8 +204,11 @@ class Host extends JPanel{
 					 byte[] cont = lineContent.getBytes();
 					 writer.write(cont);
 				 }
+				
 				 
 				 
+			 }else{
+				 errorDisplay.setText("Couldn't get file");
 			 }
 			 
 			 
