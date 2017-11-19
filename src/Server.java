@@ -14,7 +14,6 @@ class Server{
 	  
 	  
 	  ClientHandler handler =  new ClientHandler(client);
-	  System.out.println("Connection Established.");
 	  handler.start();
 	  }
   }
@@ -52,23 +51,20 @@ class ClientHandler extends Thread {
 		clientSocket = socket;
 		String[] clientData = new String[0];
 		String[] clientFileData = new String[0];
-		
+		String[] temp;
 		
 		try {
-			while(clientData.length == 0) {
 				clientData = Net_Util.recStrArr(clientSocket);
-			}
 			username = clientData[0];
 			connectionType = clientData[1];
 			hostname = clientData[2];
 			client = new Client(clientSocket.getInetAddress(), PORT, username, connectionType);
 			Net_Util.send(clientSocket, "Client ID Recieved");
-			while(clientFileData.length == 0) {
+			
 				clientFileData = Net_Util.recStrArr(clientSocket);
-			}
 			ArrayList<NapFile> files = new ArrayList<NapFile>();
-			for(int i = 0; i < clientFileData.length; i = i+2) {
-				NapFile x = new NapFile(clientFileData[i], clientFileData[i+1]);
+			for(int i = 0; i < clientFileData.length; i++) {
+				NapFile x = new NapFile(clientFileData[i].split("@@")[0], clientFileData[i].split("@@")[1]);
 				files.add(x);
 			}
 			registerClient(client, files);
@@ -91,35 +87,36 @@ class ClientHandler extends Thread {
 				if(command.length == 1) {
 					for(NapFile file: clientMap.keySet()) {
 						for(Client client : clientMap.get(file)) {
-							results.add(file.FILE_NAME + "::" + client.USERNAME + "::" + client.CONNECTION_TYPE);
+							results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.USERNAME + "@@" + client.CONNECTION_TYPE);
 						}
 					}
-				} else if(command.length == 2) {
-					HashMap<NapFile,ArrayList<Client>> output =new HashMap<NapFile,ArrayList<Client>>(100);
-
-					
-					 Set<NapFile> x = clientMap.keySet();	
+				} else {	
+					System.out.println("2 args");
 					 for(NapFile file: clientMap.keySet()) {
 						 if(file.DESCRIPTION.contains(command[1])) {
 							 for(Client client: clientMap.get(file))
-								 results.add(file.FILE_NAME + "::" + client.USERNAME + "::" + client.CONNECTION_TYPE);
+								 results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.USERNAME + "@@" + client.CONNECTION_TYPE);
 						 }
 					 }
+				}System.out.println(results.size());
 					
 					 
 					if(results.isEmpty()) {
-						
+						System.out.println("empty");
 						String[] message={"No results found"};
+						Net_Util.send(clientSocket, message);
 					} else {
-						String [] message = (String[])results.toArray();
+						int i = 0;
+						String[] message = new String[results.size()];
+						System.out.println("yes");
+						for(String s:results)
+							message[i++] = s;
 						Net_Util.send(clientSocket, message);
 					}
 					
 					
 					
-				}else {
-					//TODO: error handling
-				}
+				
 			}
 			if(command[0].startsWith("quit")) {
 				removeClient(client);
