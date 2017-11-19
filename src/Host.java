@@ -26,6 +26,17 @@ class Host extends JPanel {
 
 	// These all belong to the Search Pane
 	private JTextField searchField;
+  private JTable fileTable;
+  private JTable clientTable;
+
+  private static final String[] colNames=new String[]{
+      "File" , "Description" };
+  private static final String[] clientColNames=new String[]{
+      "Speed" , "Username", "IP" };
+  private String[][] fileData;
+  private String[][] clientData;
+  private JButton searchButton;
+
 
 	// These all belong to the Command Pane
 	private JTextField cmdField;
@@ -109,8 +120,15 @@ class Host extends JPanel {
     fileTable.setVisible(false);
     clientTable.setVisible(false);
 
+
+    searchButton=new JButton("Search");
+    searchButton.addActionListener(listen);
+    searchButton.setActionCommand("Search");
+
+
     textPanel.add(new JLabel("Search:"));
     textPanel.add(searchField);
+    textPanel.add(searchButton);
 
     tablePanel.add(fileTable,BorderLayout.WEST);
     tablePanel.add(clientTable,BorderLayout.EAST);
@@ -217,18 +235,21 @@ class Host extends JPanel {
 		// @Override
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand().toLowerCase()) {
-			case "connect":
-				if (connect()) {
-					errorDisplay.setText("");
+  			case "connect":
+  				if (connect()) {
+  					errorDisplay.setText("");
 
-				} else {
-					errorDisplay.setText("Please Try Again.");
-				}
+  				} else {
+  					errorDisplay.setText("Please Try Again.");
+  				}
 
-				break;
+  			break;
+        case "search":
+          //TODO: Put search code here:)
 
+
+        break;
 			}
-
 		}
 
 	}
