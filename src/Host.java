@@ -199,6 +199,87 @@ class Host extends JPanel {
 
 	}
 
+<<<<<<< HEAD
+=======
+    //centers the frame.
+    Box box = new Box(BoxLayout.Y_AXIS);
+		box.add(Box.createVerticalGlue());
+		box.add(h);
+		box.add(Box.createVerticalGlue());
+		f.getContentPane().add(box);
+    //sets up Jframe
+    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    f.pack();
+    f.setLocationRelativeTo(null);
+    f.setVisible(true);
+    clientRun cSpot = new clientRun();
+    cSpot.run();
+
+
+
+
+
+  }
+  
+ private void requestFile(String fileName, Client fileOwner){
+	 try{
+		 Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
+		 Net_Util.send(OwnerSocket, fileName);
+		
+		 
+		 try{
+			 
+			 File localCopy = new File("./sharingFiles/" + fileName);
+			 FileOutputStream writer = new FileOutputStream(localCopy);
+			 String[] contents = Net_Util.recStrArr(OwnerSocket);
+			 
+			 if(localCopy.createNewFile()){
+				 for(String lineContent: contents){
+					 byte[] cont = lineContent.getBytes();
+					 writer.write(cont);
+				 }
+				 
+				 
+			 }
+			 
+			 
+			 
+			 
+		 }catch(Exception e){
+			 System.out.println("Problem sending request");
+		 }
+		 
+		 
+		 
+	 }catch(Exception e){
+		 System.out.println("couldn't send request");
+	 }
+	 
+	 
+ }
+
+  private class ClientListner implements ActionListener {
+
+
+		    //@Override
+		    public void actionPerformed(ActionEvent e) {
+          switch(e.getActionCommand().toLowerCase()){
+            case "connect":
+              errorDisplay.setText("Please Try Again.");
+              //errorDisplay.setText("");
+              hostName.getText();
+              break;
+            
+            case "retrieve":
+            	//FIXME: requestFile() needs two input parameters: a file name and a client object.
+            	//We need some way to get that information out of the GUI.
+            	//example: requestFile(fileName, clientToRetrieveFrom);
+
+
+          }
+        }
+  }
+>>>>>>> origin/jw_clientToClient
 }
 
 class clientRun implements Runnable {
