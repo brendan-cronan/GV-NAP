@@ -223,7 +223,24 @@ class Host extends JPanel {
 		box.add(Box.createVerticalGlue());
 		f.getContentPane().add(box);
 		// sets up Jframe
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //This is to intercept the close call "click on x" to send quit to the server
+    f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    f.addWindowListener(new java.awt.event.WindowAdapter() {
+      @Override
+      public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+              if(h.serverSocket!=null){
+                String[] a={"quit\n"};
+                Net_Util.send(h.serverSocket,a);
+              }
+              System.exit(0);
+          }
+      });
+
+
+
+
+
+
 		f.pack();
 		f.setLocationRelativeTo(null);
 		f.setVisible(true);
