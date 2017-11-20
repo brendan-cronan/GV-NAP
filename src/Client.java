@@ -8,13 +8,13 @@ class Client{
   public final InetAddress IP;
   public final int PORT_NUM;
   public final String USERNAME;
-  public final ConnectionType CONNECTION_TYPE;
+  public final String CONNECTION_TYPE;
 
-  public Client(InetAddress ip,int port,String name,ConnectionType c){
+  public Client(InetAddress ip,int port,String name,String connectionType){
     IP=ip;
     PORT_NUM=port;
     USERNAME=name;
-    CONNECTION_TYPE=c;
+    CONNECTION_TYPE=connectionType;
   }
 
   public boolean equals(Client c){
@@ -25,7 +25,5 @@ class Client{
     return false;
   }
 
-  // client to client comment
-  
-  //time to test if I have commitment issues -Dan S
+
 }
