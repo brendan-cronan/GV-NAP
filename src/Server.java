@@ -3,47 +3,48 @@ import java.io.*;
 import java.net.*;
 
 class Server{
-	public static final int PORT = 6603;
-  private HashMap<Client,ArrayList<NapFile>> fileMap =new HashMap<Client,ArrayList<NapFile>>(100);
-  private HashMap<NapFile,ArrayList<Client>> clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
+	//public static int PORT = 6603;
+  public static HashMap<Client,ArrayList<NapFile>> fileMap =new HashMap<Client,ArrayList<NapFile>>(100);
+  public static HashMap<NapFile,ArrayList<Client>> clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
+
+  public static void main(String[] args){
+
   
-  Server(){
+	try {
+		ServerSocket welcome = new ServerSocket(6603);
+	
+		
+	
+	  
 	  
 	  while(true) {
-	  Socket client = Net_Util.welcomeClient(PORT);
+		  
+	  //Socket client = Net_Util.welcomeClient(6603);
+	  Socket client;
+	try {
+		client = welcome.accept();
+		System.out.println("New client connecting");
+	ClientHandler handler =  new ClientHandler(client);
+	
+	  new Thread(handler).start();
 	  
-	  
-	  ClientHandler handler =  new ClientHandler(client);
-	  handler.start();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		welcome.close();
+	}
 	  }
-  }
-  public void registerClient(Client client, ArrayList<NapFile> files) {
-		fileMap.put(client, files);
-		for(NapFile file : files) {
-			if(!clientMap.containsKey(file)) {
-				ArrayList<Client> clients= new ArrayList<Client>();
-				clients.add(client);
-				clientMap.put(file, clients);
-			}else {
-				clientMap.get(file).add(client);
-			}
-	  }
-  }
-  
-  public void removeClient(Client client) {
-		for(NapFile file: fileMap.get(client)) {
-			clientMap.get(file).remove(client);
-			if(clientMap.get(file).isEmpty()) {
-				clientMap.remove(file);
-			}
-		}
-		fileMap.remove(client);
-	  }
-  
-  
-class ClientHandler extends Thread {
+	  } catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
 
-	public static final int PORT = 6603;
+	  
+  }
+  
+}
+class ClientHandler implements Runnable {
+
 	Socket clientSocket;
 	String username, hostname, connectionType;
 	Client client;
@@ -58,7 +59,7 @@ class ClientHandler extends Thread {
 			username = clientData[0];
 			connectionType = clientData[1];
 			hostname = clientData[2];
-			client = new Client(clientSocket.getInetAddress(), PORT, username, connectionType);
+			client = new Client(clientSocket.getInetAddress(), 6603, username, connectionType);
 			Net_Util.send(clientSocket, "Client ID Recieved");
 			
 				clientFileData = Net_Util.recStrArr(clientSocket);
@@ -73,49 +74,70 @@ class ClientHandler extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+	public void registerClient(Client client, ArrayList<NapFile> files) {
+		Server.fileMap.put(client, files);
+		for(NapFile file : files) {
+			if(!Server.clientMap.containsKey(file)) {
+				ArrayList<Client> clients= new ArrayList<Client>();
+				clients.add(client);
+				Server.clientMap.put(file, clients);
+			}else {
+				Server.clientMap.get(file).add(client);
+			}
+	  }
+  }
+
+  public void removeClient(Client client) {
+		for(NapFile file: Server.fileMap.get(client)) {
+			Server.clientMap.get(file).remove(client);
+			if(Server.clientMap.get(file).isEmpty()) {
+				Server.clientMap.remove(file);
+			}
+		}
+		Server.fileMap.remove(client);
+	  }
+
+
 	public void run() {
 		boolean running = true;
 		String[] command;
 		ArrayList<String> results = new ArrayList<String>();
 		while(running){
-			
+
 			try {
 			command = Net_Util.recString(clientSocket).split(" ");
-			
+
 			if(command[0].startsWith("search")) {
 				if(command.length == 1) {
-					for(NapFile file: clientMap.keySet()) {
-						for(Client client : clientMap.get(file)) {
+					for(NapFile file: Server.clientMap.keySet()) {
+						for(Client client : Server.clientMap.get(file)) {
 							results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.USERNAME + "@@" + client.CONNECTION_TYPE);
 						}
 					}
 				} else {	
 					System.out.println("2 args");
-					 for(NapFile file: clientMap.keySet()) {
+					 for(NapFile file: Server.clientMap.keySet()) {
 						 if(file.DESCRIPTION.contains(command[1])) {
-							 for(Client client: clientMap.get(file))
+							 for(Client client: Server.clientMap.get(file))
 								 results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.USERNAME + "@@" + client.CONNECTION_TYPE);
 						 }
 					 }
 				}System.out.println(results.size());
-					
-					 
+
+
 					if(results.isEmpty()) {
-						System.out.println("empty");
 						String[] message={"No results found"};
 						Net_Util.send(clientSocket, message);
 					} else {
 						int i = 0;
 						String[] message = new String[results.size()];
-						System.out.println("yes");
 						for(String s:results)
 							message[i++] = s;
 						Net_Util.send(clientSocket, message);
 					}
-					
-					
-					
+
+
+
 				
 			}
 			if(command[0].startsWith("quit")) {
@@ -125,8 +147,8 @@ class ClientHandler extends Thread {
 			}
 			} catch(Exception e) {
 			}
-			
-	
+
+
 	}
 }
 }
@@ -136,10 +158,6 @@ class ClientHandler extends Thread {
 
 
 
-  public static void main(String[] args){
-Server s = new Server();
-  }
 
-}
 
 
