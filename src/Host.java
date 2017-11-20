@@ -189,7 +189,6 @@ class Host extends JPanel {
 		ArrayList<NapFile> files = new ArrayList<NapFile>();
 		String [] t =  {"search " + searchField.getText() + "\n"};
 		System.out.println("sending search " + t);
-		
 		Net_Util.send(serverSocket,t);
 		try {
 			String[] results = Net_Util.recStrArr(serverSocket), split;

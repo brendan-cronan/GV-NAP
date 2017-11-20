@@ -94,7 +94,6 @@ class ClientHandler implements Runnable {
 		String[] command;
 		ArrayList<String> results = new ArrayList<String>();
 		while (running) {
-
 			try {
 				command = Net_Util.recStrArr(clientSocket)[0].split(" ");
 				System.out.println(command.length);
