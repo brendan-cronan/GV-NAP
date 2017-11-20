@@ -16,6 +16,6 @@ class NapFile{
   }
 
   public String toString() {
-	  return(FILE_NAME  + "::" + DESCRIPTION);
+	  return(FILE_NAME  + "@@" + DESCRIPTION);
   }
 }

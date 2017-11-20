@@ -44,6 +44,7 @@ class Host extends JPanel {
 	private JButton cmdButton;
 
 	private Socket serverSocket;
+	 private HashMap<NapFile,ArrayList<Client>> clientMap;
 	ArrayList<NapFile> files = new ArrayList<NapFile>();
 
 	public Host() {
@@ -203,7 +204,40 @@ class Host extends JPanel {
 
 
 
-
+  private void search() {
+		clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
+		ArrayList<Client> clients;
+		ArrayList<NapFile> files  = new ArrayList<NapFile>();
+		Net_Util.send(serverSocket, "search " + searchField.getText() + "\n");
+		try {
+			String[] results = Net_Util.recStrArr(serverSocket), split;
+			if(results[0].equals("No Results Found")) {
+				//output
+			} else {
+			for(String s:results) {
+				clients = new ArrayList<Client>();
+				split = s.split("@@");
+				Client c = new Client(InetAddress.getByName(split[2].substring(1)), PORT_NUM, split[3], split[4]);
+				NapFile f = new NapFile(split[0], split[1]);
+				if(!files.contains(f)) {
+					files.add(f);
+				}
+				if(!clients.contains(c)) {
+					clients.add(c);
+				}
+				if(clientMap.containsKey(f))
+					clientMap.get(f).add(c);
+				else
+					clientMap.put(f, clients);
+				
+			}
+			initFileTable(files);
+			}
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
 
 
 
@@ -230,7 +264,7 @@ class Host extends JPanel {
       public void windowClosing(java.awt.event.WindowEvent windowEvent) {
               if(h.serverSocket!=null){
                 String[] a={"quit\n"};
-                Net_Util.send(h.serverSocket,a);
+               // Net_Util.send(h.serverSocket,a);
               }
               System.exit(0);
           }
@@ -255,6 +289,19 @@ class Host extends JPanel {
   			case "connect":
   				if (connect()) {
   					errorDisplay.setText("");
+					makeFileList();
+					try {
+						if(Net_Util.recString(serverSocket).equals("Client ID Recieved")) {
+							System.out.println("connected");
+						sendFileList();
+						search();
+						} else {
+							errorDisplay.setText("Please Try Again");
+						}
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+}
 
   				} else {
   					errorDisplay.setText("Please Try Again.");
@@ -262,7 +309,7 @@ class Host extends JPanel {
 
   			break;
         case "search":
-          //TODO: Put search code here:)
+          //search();
 
 
         break;
@@ -270,6 +317,17 @@ class Host extends JPanel {
 		}
 
 	}
+	
+	public void sendFileList() {
+		int i=0;
+		String[] fileData = new String[files.size()];
+		for(NapFile file : files) {
+			fileData[i] = file.toString();
+			i++;
+		}
+		Net_Util.send(serverSocket, fileData);
+		
+}
 
 	private void makeFileList() {
 
@@ -328,8 +386,9 @@ class Host extends JPanel {
 		}
 		if (goodData)
 			try {
-				serverSocket = new Socket(serverName.getText(), PORT_NUM);
+				serverSocket = Net_Util.connectToServer(serverName.getText(), 6603);
 				connectionEstablished = true;
+				Net_Util.send(serverSocket, clientData);
 			} catch (Exception e) {
 
 			}

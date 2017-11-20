@@ -103,13 +103,13 @@ class Net_Util{
     sendToServer("DOUBLE",d+"",s);
   }
   public static void send(Socket s, String str){
-    sendToServer("STRING",str,s);
+    sendToServer("STRING",str + "\n",s);
   }
   public static void send(Socket s, String[] starr){
     String out="";
     for(String str:starr)
       out+=str+"|";
-    out=out.substring(0,out.length()-1);
+    out=out.substring(0,out.length()-1) + "\n";
     sendToServer("STRINGARR",out,s);
   }
   /**
@@ -233,7 +233,6 @@ class Net_Util{
     //This does the thing below.
     BufferedReader in=getReader(inSocket);
     //BufferedReader in=new BufferedReader(new InputStreamReader(inSocket.getInputStream()));
-
     tokens=in.readLine().split("::");
     if(!type.equals(tokens[0])){
 
