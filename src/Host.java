@@ -194,6 +194,7 @@ class Host extends JPanel {
 				// output
 			} else {
 				for (String s : results) {
+					System.out.println(s);
 					clients = new ArrayList<Client>();
 					split = s.split("@@");
 					Client c = new Client(InetAddress.getByName(split[2].substring(1)), PORT_NUM, split[3], split[4]);
@@ -229,23 +230,18 @@ class Host extends JPanel {
 		box.add(Box.createVerticalGlue());
 		f.getContentPane().add(box);
 		// sets up Jframe
-    //This is to intercept the close call "click on x" to send quit to the server
-    f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    f.addWindowListener(new java.awt.event.WindowAdapter() {
-      @Override
-      public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-              if(h.serverSocket!=null){
-                String[] a={"quit\n"};
-               // Net_Util.send(h.serverSocket,a);
-              }
-              System.exit(0);
-          }
-      });
-
-
-
-
-
+		// This is to intercept the close call "click on x" to send quit to the server
+		f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		f.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (h.serverSocket != null) {
+					String[] a = { "quit\n" };
+					// Net_Util.send(h.serverSocket,a);
+				}
+				System.exit(0);
+			}
+		});
 
 		f.pack();
 		f.setLocationRelativeTo(null);
@@ -318,9 +314,24 @@ class Host extends JPanel {
 				search();
 
 				break;
+			case "command":
+				String[] command = cmdField.getText().split(" ");
+				if (command[0].equalsIgnoreCase("retr")) {
+					for (NapFile f : clientMap.keySet()) {
+						if (f.FILE_NAME.equals(command[1])) {
+							for (Client c : clientMap.get(f)) {
+								if (c.USERNAME.equals(command[2])) {
+									requestFile(command[1], c);
+									System.out.println("file requested");
+							}
+						}
+					}
+				}
+
 			}
 		}
 
+	}
 	}
 
 	public void sendFileList() {
@@ -414,7 +425,7 @@ class clientRun implements Runnable {
 			try {
 				Socket requester = Net_Util.welcomeClient(6603);
 				String requestedFile = Net_Util.recString(requester);
-				File readFile = new File("./sharingFiles/" + requestedFile);
+				File readFile = new File("./SharedFiles/" + requestedFile);
 				InputStream reader = new FileInputStream(readFile);
 				ArrayList<String> content = new ArrayList<String>();
 
