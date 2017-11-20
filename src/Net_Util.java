@@ -103,14 +103,14 @@ class Net_Util {
 	}
 
 	public static void send(Socket s, String str) {
-		sendToServer("STRING", str, s);
+		sendToServer("STRING", str + "\n", s);
 	}
 
 	public static void send(Socket s, String[] starr) {
 		String out = "";
 		for (String str : starr)
 			out += str + "|";
-		out = out.substring(0, out.length() - 1);
+		out = out.substring(0, out.length() - 1) + "\n";
 		sendToServer("STRINGARR", out, s);
 	}
 

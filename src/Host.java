@@ -21,30 +21,38 @@ class Host extends JPanel {
 	private JTextField portNum;
 	private JTextField userName;
 	private JTextField hostName;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 	private JComboBox<String> connectionType;
 	private JButton connectButton;
 
 	// These all belong to the Search Pane
 	private JTextField searchField;
-  private JTable fileTable;
-  private JTable clientTable;
+	private JTable fileTable;
+	private JTable clientTable;
 
-  private static final String[] colNames=new String[]{
-      "File" , "Description" };
-  private static final String[] clientColNames=new String[]{
-      "Speed" , "Username", "IP" };
-  private String[][] fileData;
-  private String[][] clientData;
-  private JButton searchButton;
+<<<<<<< HEAD
+=======
+	private static final String[] colNames = new String[] { "File", "Description" };
+	private static final String[] clientColNames = new String[] { "Speed", "Username", "IP" };
+	private String[][] fileData;
+	private String[][] clientData;
+	private JButton searchButton;
 
-
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 	// These all belong to the Command Pane
 	private JTextField cmdField;
 	private JTextArea cmdDisplay;
 	private JButton cmdButton;
 
 	private Socket serverSocket;
+<<<<<<< HEAD
 	 private HashMap<NapFile,ArrayList<Client>> clientMap;
+=======
+	private HashMap<NapFile, ArrayList<Client>> clientMap;
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 	ArrayList<NapFile> files = new ArrayList<NapFile>();
 
 	public Host() {
@@ -56,10 +64,13 @@ class Host extends JPanel {
 		FilePane = new JPanel(new BorderLayout());
 		CmdPane = new JPanel(new BorderLayout());
 
+<<<<<<< HEAD
 		/*
 		 * To see the size of the panels ConnectPane.setBackground(Color.RED);
 		 * FilePane.setBackground(Color.MAGENTA); CmdPane.setBackground(Color.GREEN);
 		 */
+=======
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 		ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 120));
 		FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 400));
 		CmdPane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 200));
@@ -106,46 +117,35 @@ class Host extends JPanel {
 		box.add(Box.createHorizontalGlue());
 		box.add(errorDisplay);
 		box.add(Box.createHorizontalGlue());
-    ConnectPane.add(box,BorderLayout.SOUTH);
+		ConnectPane.add(box, BorderLayout.SOUTH);
 
-    //END: Connect Pane
+		// END: Connect Pane
 
+		// BEGIN: File Pane
+		searchField = new JTextField(40);
+		JPanel tablePanel = new JPanel(new BorderLayout());
+		JPanel textPanel = new JPanel(new FlowLayout());
 
-    // BEGIN: File Pane
-    searchField=new JTextField(40);
-    JPanel tablePanel=new JPanel(new BorderLayout());
-    JPanel textPanel=new JPanel(new FlowLayout());
+		fileTable = new JTable();
+		clientTable = new JTable();
+		fileTable.setVisible(false);
+		clientTable.setVisible(false);
 
-    fileTable = new JTable();
-    clientTable=new JTable();
-    fileTable.setVisible(false);
-    clientTable.setVisible(false);
+		searchButton = new JButton("Search");
+		searchButton.addActionListener(listen);
+		searchButton.setActionCommand("Search");
 
+		textPanel.add(new JLabel("Search:"));
+		textPanel.add(searchField);
+		textPanel.add(searchButton);
 
-    searchButton=new JButton("Search");
-    searchButton.addActionListener(listen);
-    searchButton.setActionCommand("Search");
+		tablePanel.add(fileTable, BorderLayout.WEST);
+		tablePanel.add(clientTable, BorderLayout.EAST);
 
+		FilePane.add(textPanel, BorderLayout.NORTH);
+		FilePane.add(tablePanel, BorderLayout.CENTER);
 
-    textPanel.add(new JLabel("Search:"));
-    textPanel.add(searchField);
-    textPanel.add(searchButton);
-
-    tablePanel.add(fileTable,BorderLayout.WEST);
-    tablePanel.add(clientTable,BorderLayout.EAST);
-
-
-
-
-
-
-    FilePane.add(textPanel,BorderLayout.NORTH);
-    FilePane.add(tablePanel,BorderLayout.CENTER);
-
-
-
-    // END: File Pane
-
+		// END: File Pane
 
 		// BEGIN: Command Pane
 		cmdField = new JTextField(70);
@@ -170,7 +170,10 @@ class Host extends JPanel {
 
 	}
 
+	private void initFileTable(ArrayList<NapFile> fileList) {
+		fileData = new String[fileList.size()][2];
 
+<<<<<<< HEAD
 
   private void initFileTable(ArrayList<NapFile> fileList){
     fileData=new String[fileList.size()][2];
@@ -187,58 +190,75 @@ class Host extends JPanel {
 
 
 
+=======
+		int i = 0;
+		for (NapFile n : fileList) {
+			fileData[i][0] = n.FILE_NAME;
+			fileData[i][1] = n.DESCRIPTION;
+			i++;
+		}
+		fileTable = new JTable(fileData, colNames);
 
+	}
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 
-  private void initClientTable(ArrayList<Client> clientList){
-    clientData=new String[clientList.size()][3];
-    int i=0;
-    for(Client c:clientList){
-      clientData[i][0]=c.CONNECTION_TYPE;
-      clientData[i][1]=c.USERNAME;
-      clientData[i][2]=c.IP.toString();
+	private void initClientTable(ArrayList<Client> clientList) {
+		clientData = new String[clientList.size()][3];
+		int i = 0;
+		for (Client c : clientList) {
+			clientData[i][0] = c.CONNECTION_TYPE;
+			clientData[i][1] = c.USERNAME;
+			clientData[i][2] = c.IP.toString();
 
-      i++;
-    }
-    clientTable=new JTable(clientData,clientColNames);
-  }
+			i++;
+		}
+		clientTable = new JTable(clientData, clientColNames);
+	}
 
-
-
-  private void search() {
-		clientMap =new HashMap<NapFile,ArrayList<Client>>(100);
+	private void search() {
+		clientMap = new HashMap<NapFile, ArrayList<Client>>(100);
 		ArrayList<Client> clients;
-		ArrayList<NapFile> files  = new ArrayList<NapFile>();
+		ArrayList<NapFile> files = new ArrayList<NapFile>();
 		Net_Util.send(serverSocket, "search " + searchField.getText() + "\n");
 		try {
 			String[] results = Net_Util.recStrArr(serverSocket), split;
-			if(results[0].equals("No Results Found")) {
-				//output
+			if (results[0].equals("No Results Found")) {
+				// output
 			} else {
-			for(String s:results) {
-				clients = new ArrayList<Client>();
-				split = s.split("@@");
-				Client c = new Client(InetAddress.getByName(split[2].substring(1)), PORT_NUM, split[3], split[4]);
-				NapFile f = new NapFile(split[0], split[1]);
-				if(!files.contains(f)) {
-					files.add(f);
+				for (String s : results) {
+					clients = new ArrayList<Client>();
+					split = s.split("@@");
+					Client c = new Client(InetAddress.getByName(split[2].substring(1)), PORT_NUM, split[3], split[4]);
+					NapFile f = new NapFile(split[0], split[1]);
+					if (!files.contains(f)) {
+						files.add(f);
+					}
+					if (!clients.contains(c)) {
+						clients.add(c);
+					}
+					if (clientMap.containsKey(f))
+						clientMap.get(f).add(c);
+					else
+						clientMap.put(f, clients);
+
 				}
-				if(!clients.contains(c)) {
-					clients.add(c);
-				}
+<<<<<<< HEAD
 				if(clientMap.containsKey(f))
 					clientMap.get(f).add(c);
 				else
 					clientMap.put(f, clients);
 
+=======
+				initFileTable(files);
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 			}
-			initFileTable(files);
-			}
-			} catch (IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+<<<<<<< HEAD
 
 
 
@@ -252,11 +272,20 @@ class Host extends JPanel {
 
     //centers the frame.
     Box box = new Box(BoxLayout.Y_AXIS);
+=======
+	public static void main(String[] args) {
+		JFrame f = new JFrame("GV-NAPSTER PROGRAM");
+		Host h = new Host();
+
+		// centers the frame.
+		Box box = new Box(BoxLayout.Y_AXIS);
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 		box.add(Box.createVerticalGlue());
 		box.add(h);
 		box.add(Box.createVerticalGlue());
 		f.getContentPane().add(box);
 		// sets up Jframe
+<<<<<<< HEAD
     //This is to intercept the close call "click on x" to send quit to the server
     f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     f.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -275,59 +304,108 @@ class Host extends JPanel {
 
 
 
+=======
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 		f.pack();
 		f.setLocationRelativeTo(null);
 		f.setVisible(true);
 
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	 * send file request to another client
+	 */
+	private void requestFile(String fileName, Client fileOwner) {
+		try {
+			// FIXME POTENTIAL ISSUE
+			Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
+			Net_Util.send(OwnerSocket, fileName);
+
+			try {
+
+				File localCopy = new File("./sharingFiles/" + fileName);
+				FileOutputStream writer = new FileOutputStream(localCopy);
+				String[] contents = Net_Util.recStrArr(OwnerSocket);
+
+				if (localCopy.createNewFile()) {
+					for (String lineContent : contents) {
+						byte[] cont = lineContent.getBytes();
+						writer.write(cont);
+					}
+
+				} else {
+					errorDisplay.setText("Couldn't get file");
+				}
+
+			} catch (Exception e) {
+				System.out.println("Problem sending request");
+			}
+
+		} catch (Exception e) {
+			System.out.println("couldn't send request");
+		}
+	}
+
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 	private class ClientListner implements ActionListener {
 
 		// @Override
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand().toLowerCase()) {
+<<<<<<< HEAD
   			case "connect":
   				if (connect()) {
   					errorDisplay.setText("");
+=======
+			case "connect":
+				if (connect()) {
+					errorDisplay.setText("");
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 					makeFileList();
 					try {
-						if(Net_Util.recString(serverSocket).equals("Client ID Recieved")) {
+						if (Net_Util.recString(serverSocket).equals("Client ID Recieved")) {
 							System.out.println("connected");
-						sendFileList();
-						search();
+							sendFileList();
+							search();
 						} else {
 							errorDisplay.setText("Please Try Again");
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-}
+					}
 
-  				} else {
-  					errorDisplay.setText("Please Try Again.");
-  				}
+				} else {
+					errorDisplay.setText("Please Try Again.");
+				}
 
-  			break;
-        case "search":
-          //search();
+				break;
+			case "search":
+				search();
 
-
-        break;
+				break;
 			}
 		}
 
 	}
 
 	public void sendFileList() {
-		int i=0;
+		int i = 0;
 		String[] fileData = new String[files.size()];
-		for(NapFile file : files) {
+		for (NapFile file : files) {
 			fileData[i] = file.toString();
 			i++;
 		}
 		Net_Util.send(serverSocket, fileData);
 
+<<<<<<< HEAD
 }
+=======
+	}
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 
 	private void makeFileList() {
 
@@ -369,7 +447,7 @@ class Host extends JPanel {
 				}
 			}
 		}
-		//initFileTable();
+		// initFileTable();
 	}
 
 	private boolean connect() {
@@ -395,4 +473,44 @@ class Host extends JPanel {
 		return connectionEstablished;
 	}
 
+<<<<<<< HEAD
+=======
+}
+
+class clientRun implements Runnable {
+
+	/*
+	 * recieve file requests and send files
+	 */
+	@Override
+	public void run() {
+
+		while (true) {
+			try {
+				Socket requester = Net_Util.welcomeClient(6603);
+				String requestedFile = Net_Util.recString(requester);
+				File readFile = new File("./sharingFiles/" + requestedFile);
+				InputStream reader = new FileInputStream(readFile);
+				ArrayList<String> content = new ArrayList<String>();
+
+				BufferedReader bufRead = new BufferedReader(new InputStreamReader(reader));
+				String lineContent = bufRead.readLine();
+				while (null != lineContent) {
+					content.add(lineContent);
+					lineContent = bufRead.readLine();
+				}
+				String[] sendFile = (String[]) content.toArray();
+				Net_Util.send(requester, sendFile);
+				requester.close();
+				reader.close();
+				bufRead.close();
+
+			} catch (Exception e) {
+				System.out.println("Issue receiving connection");
+			}
+
+		}
+
+	}
+>>>>>>> 542cca66772e11ce1c3ee05f375668891e95a5ac
 }
