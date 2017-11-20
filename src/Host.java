@@ -1,11 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -59,6 +54,10 @@ class Host extends JPanel {
 		FilePane = new JPanel(new BorderLayout());
 		CmdPane = new JPanel(new BorderLayout());
 
+		/*
+		 * To see the size of the panels ConnectPane.setBackground(Color.RED);
+		 * FilePane.setBackground(Color.MAGENTA); CmdPane.setBackground(Color.GREEN);
+		 */
 		ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 120));
 		FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 400));
 		CmdPane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 200));
@@ -97,7 +96,6 @@ class Host extends JPanel {
 		miniConnect.add(new JLabel("Host Name:"));
 		miniConnect.add(hostName);
 		miniConnect.add(connectionType);
-
 		miniConnect.add(connectButton);
 
 		ConnectPane.add(miniConnect, BorderLayout.CENTER);
@@ -231,7 +229,24 @@ class Host extends JPanel {
 		box.add(Box.createVerticalGlue());
 		f.getContentPane().add(box);
 		// sets up Jframe
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //This is to intercept the close call "click on x" to send quit to the server
+    f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    f.addWindowListener(new java.awt.event.WindowAdapter() {
+      @Override
+      public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+              if(h.serverSocket!=null){
+                String[] a={"quit\n"};
+               // Net_Util.send(h.serverSocket,a);
+              }
+              System.exit(0);
+          }
+      });
+
+
+
+
+
+
 		f.pack();
 		f.setLocationRelativeTo(null);
 		f.setVisible(true);
