@@ -255,12 +255,13 @@ class Host extends JPanel {
 	private void requestFile(String fileName, Client fileOwner) {
 		try {
 			// FIXME POTENTIAL ISSUE
-			Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
+			System.out.println(fileOwner.IP.toString().substring(1) + fileOwner.PORT_NUM);
+			Socket OwnerSocket = Net_Util.connectToServer(fileOwner.IP.toString().substring(1), fileOwner.PORT_NUM);
 			Net_Util.send(OwnerSocket, fileName);
 
 			try {
 
-				File localCopy = new File("./sharingFiles/" + fileName);
+				File localCopy = new File("./SharedFiles/" + fileName);
 				FileOutputStream writer = new FileOutputStream(localCopy);
 				String[] contents = Net_Util.recStrArr(OwnerSocket);
 
