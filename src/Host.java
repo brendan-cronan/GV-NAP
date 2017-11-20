@@ -1,22 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
-
 
 class Host extends JPanel {
 
 	private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
 	private static final int PORT_NUM = 6603;
 	private static final String[] CONN_TYPE = new String[] { "Ethernet", "Modem", "T1", "T3" };
-
 
 	private JPanel ConnectPane;
 	private JPanel FilePane;
@@ -27,8 +20,7 @@ class Host extends JPanel {
 	private JTextField serverName;
 	private JTextField portNum;
 	private JTextField userName;
-	private JTextField hostName
-    << master
+	private JTextField hostName;
 	private JComboBox<String> connectionType;
 	private JButton connectButton;
 
@@ -46,16 +38,14 @@ class Host extends JPanel {
   private JButton searchButton;
 
 
-
 	// These all belong to the Command Pane
 	private JTextField cmdField;
 	private JTextArea cmdDisplay;
 	private JButton cmdButton;
 
 	private Socket serverSocket;
-  private HashMap<NapFile,ArrayList<Client>> clientMap;
+	 private HashMap<NapFile,ArrayList<Client>> clientMap;
 	ArrayList<NapFile> files = new ArrayList<NapFile>();
-
 
 	public Host() {
 		this.setLayout(new BorderLayout());
@@ -66,7 +56,9 @@ class Host extends JPanel {
 		FilePane = new JPanel(new BorderLayout());
 		CmdPane = new JPanel(new BorderLayout());
 
-
+		/*
+		 * To see the size of the panels ConnectPane.setBackground(Color.RED);
+		 * FilePane.setBackground(Color.MAGENTA); CmdPane.setBackground(Color.GREEN);
 		 */
 		ConnectPane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 120));
 		FilePane.setPreferredSize(new Dimension(WINDOW_SIZE.width, 400));
@@ -106,7 +98,6 @@ class Host extends JPanel {
 		miniConnect.add(new JLabel("Host Name:"));
 		miniConnect.add(hostName);
 		miniConnect.add(connectionType);
-
 		miniConnect.add(connectButton);
 
 		ConnectPane.add(miniConnect, BorderLayout.CENTER);
@@ -196,11 +187,6 @@ class Host extends JPanel {
 
 
 
-		this.add(ConnectPane, BorderLayout.NORTH);
-		this.add(FilePane, BorderLayout.CENTER);
-		this.add(CmdPane, BorderLayout.SOUTH);
-
-	}
 
 
   private void initClientTable(ArrayList<Client> clientList){
@@ -243,14 +229,14 @@ class Host extends JPanel {
 					clientMap.get(f).add(c);
 				else
 					clientMap.put(f, clients);
-				
+
 			}
 			initFileTable(files);
 			}
 			} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 	}
 
 
@@ -263,75 +249,6 @@ class Host extends JPanel {
   public static void main(String[] args){
     JFrame f= new JFrame("GV-NAPSTER PROGRAM");
     Host h= new Host();
-
-
-		// centers the frame.
-		Box box = new Box(BoxLayout.Y_AXIS);
-		box.add(Box.createVerticalGlue());
-		box.add(h);
-		box.add(Box.createVerticalGlue());
-		f.getContentPane().add(box);
-		// sets up Jframe
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.pack();
-		f.setLocationRelativeTo(null);
-		f.setVisible(true);
-
-	}
-
-	/*
-	 * send file request to another client
-	 */
-	private void requestFile(String fileName, Client fileOwner) {
-		try {
-			// FIXME POTENTIAL ISSUE
-			Socket OwnerSocket = Net_Util.connectToServer("" + fileOwner.IP, fileOwner.PORT_NUM);
-			Net_Util.send(OwnerSocket, fileName);
-
-			try {
-
-				File localCopy = new File("./sharingFiles/" + fileName);
-				FileOutputStream writer = new FileOutputStream(localCopy);
-				String[] contents = Net_Util.recStrArr(OwnerSocket);
-
-				if (localCopy.createNewFile()) {
-					for (String lineContent : contents) {
-						byte[] cont = lineContent.getBytes();
-						writer.write(cont);
-					}
-
-				} else {
-					errorDisplay.setText("Couldn't get file");
-				}
-
-			} catch (Exception e) {
-				System.out.println("Problem sending request");
-			}
-
-		} catch (Exception e) {
-			System.out.println("couldn't send request");
-		}
-
-	}
-
-	private class ClientListner implements ActionListener {
-
-		// @Override
-		public void actionPerformed(ActionEvent e) {
-			switch (e.getActionCommand().toLowerCase()) {
-			case "connect":
-				errorDisplay.setText("Please Try Again.");
-				// errorDisplay.setText("");
-				hostName.getText();
-				break;
-			// FIXME: add case starts with retrieve
-			//
-
-			}
-
-		}
-
-	}
 
     //centers the frame.
     Box box = new Box(BoxLayout.Y_AXIS);
@@ -400,7 +317,7 @@ class Host extends JPanel {
 		}
 
 	}
-	
+
 	public void sendFileList() {
 		int i=0;
 		String[] fileData = new String[files.size()];
@@ -409,7 +326,7 @@ class Host extends JPanel {
 			i++;
 		}
 		Net_Util.send(serverSocket, fileData);
-		
+
 }
 
 	private void makeFileList() {
@@ -478,42 +395,4 @@ class Host extends JPanel {
 		return connectionEstablished;
 	}
 
-
-}
-
-class clientRun implements Runnable {
-	
-	/*
-	 * recieve file requests and send files
-	 */
-	@Override
-	public void run() {
-
-		while (true) {
-			try {
-				Socket requester = Net_Util.welcomeClient(6603);
-				String requestedFile = Net_Util.recString(requester);
-				File readFile = new File("./sharingFiles/" + requestedFile);
-				InputStream reader = new FileInputStream(readFile);
-				ArrayList<String> content = new ArrayList<String>();
-
-				BufferedReader bufRead = new BufferedReader(new InputStreamReader(reader));
-				String lineContent = bufRead.readLine();
-				while (null != lineContent) {
-					content.add(lineContent);
-					lineContent = bufRead.readLine();
-				}
-				String[] sendFile = (String[]) content.toArray();
-				Net_Util.send(requester, sendFile);
-				requester.close();
-				reader.close();
-				bufRead.close();
-
-			} catch (Exception e) {
-				System.out.println("Issue receiving connection");
-			}
-
-		}
-
-	}
 }
