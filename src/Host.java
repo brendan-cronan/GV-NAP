@@ -187,7 +187,10 @@ class Host extends JPanel {
 		clientMap = new HashMap<NapFile, ArrayList<Client>>(100);
 		ArrayList<Client> clients;
 		ArrayList<NapFile> files = new ArrayList<NapFile>();
-		Net_Util.send(serverSocket, "search " + searchField.getText() + "\n");
+		String [] t =  {"search " + searchField.getText() + "\n"};
+		System.out.println("sending search " + t);
+		
+		Net_Util.send(serverSocket,t);
 		try {
 			String[] results = Net_Util.recStrArr(serverSocket), split;
 			if (results[0].equals("No Results Found")) {

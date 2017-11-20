@@ -96,7 +96,7 @@ class ClientHandler implements Runnable {
 		while (running) {
 
 			try {
-				command = Net_Util.recString(clientSocket).split(" ");
+				command = Net_Util.recStrArr(clientSocket)[0].split(" ");
 				System.out.println(command.length);
 				if (command[0].startsWith("search")) {
 					if (command.length == 1) {
