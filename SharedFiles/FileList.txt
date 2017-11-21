@@ -1,3 +1,4 @@
 a.txt::Test file a
 b.txt::test file b
 c.txt::a test file c
+d.txt::test file d
