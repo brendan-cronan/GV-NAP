@@ -117,7 +117,7 @@ class Net_Util {
 	/*
 	 * recieves file request, creates string array out of file and sends to
 	 * requester
-	 * 
+	 *
 	 * @return if successful
 	 */
 	public static boolean sendStringFile(Socket requester, String filepath) {
@@ -150,7 +150,7 @@ class Net_Util {
 
 	/*
 	 * sends a file request and creates new file out of strings
-	 * 
+	 *
 	 * @return if successful
 	 */
 	public static boolean requestStringFile(Socket socket, String fileName) {
@@ -267,6 +267,8 @@ class Net_Util {
 	}
 
 	public static String[] recStrArr(Socket inSocket) throws IOException {
+		System.out.println("RECIEVING STRING ARRAY");
+
 		String type = "STRINGARR";
 		BufferedReader in;
 		try {
@@ -278,7 +280,8 @@ class Net_Util {
 		ArrayList<String> list = new ArrayList<>();
 		String[] tokens;
 		String temp = in.readLine();
-		tokens = temp.split("::");
+
+		tokens=temp.split("::");
 		if (!type.equals(tokens[0])) {
 			System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
 			return null;
