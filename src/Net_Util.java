@@ -259,6 +259,8 @@ class Net_Util {
 		tokens = in.readLine().split("::");
 		if (!type.equals(tokens[0])) {
 			System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
+			System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName());
+			System.out.println(Thread.currentThread().getStackTrace()[2].getMethodName());
 			return null;
 		}
 		return tokens[1];
@@ -266,10 +268,17 @@ class Net_Util {
 
 	public static String[] recStrArr(Socket inSocket) throws IOException {
 		String type = "STRINGARR";
-		BufferedReader in = getReader(inSocket);
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inSocket.getInputStream()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 		ArrayList<String> list = new ArrayList<>();
 		String[] tokens;
-		tokens = in.readLine().split("::");
+		String temp = in.readLine();
+		tokens = temp.split("::");
 		if (!type.equals(tokens[0])) {
 			System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
 			return null;

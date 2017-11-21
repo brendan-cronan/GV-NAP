@@ -39,6 +39,7 @@ class ClientHandler implements Runnable {
 	Socket clientSocket;
 	String username, hostname, connectionType;
 	Client client;
+	int port;
 
 	public ClientHandler(Socket socket) {
 		clientSocket = socket;
@@ -50,7 +51,8 @@ class ClientHandler implements Runnable {
 			username = clientData[0];
 			connectionType = clientData[1];
 			hostname = clientData[2];
-			client = new Client(clientSocket.getInetAddress(), Server.PORT, username, connectionType);
+			port = Integer.parseInt(clientData[3]);
+			client = new Client(clientSocket.getInetAddress(), port, username, connectionType);
 			Net_Util.send(clientSocket, "Client ID Recieved");
 			System.out.println("Client ID " + username + " recieved");
 			clientFileData = Net_Util.recStrArr(clientSocket);
@@ -89,19 +91,24 @@ class ClientHandler implements Runnable {
 		Server.fileMap.remove(client);
 	}
 
+	public void registerFile(Client client, NapFile file) {
+		Server.fileMap.get(client).add(file);
+		Server.clientMap.get(file).add(client);
+	}
 	public void run() {
 		boolean running = true;
 		String[] command;
-		ArrayList<String> results = new ArrayList<String>();
+		ArrayList<String> results;
 		while (running) {
 			try {
-				command = Net_Util.recStrArr(clientSocket)[0].split(" ");
+				command = Net_Util.recString(clientSocket).split(" ");
 				System.out.println(command.length);
 				if (command[0].startsWith("search")) {
+					results = new ArrayList<String>();
 					if (command.length == 1) {
 						for (NapFile file : Server.clientMap.keySet()) {
 							for (Client client : Server.clientMap.get(file)) {
-								results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@"
+								results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.PORT_NUM + "@@"
 										+ client.USERNAME + "@@" + client.CONNECTION_TYPE);
 							}
 						}
@@ -110,7 +117,7 @@ class ClientHandler implements Runnable {
 						for (NapFile file : Server.clientMap.keySet()) {
 							if (file.DESCRIPTION.contains(command[1])) {
 								for (Client client : Server.clientMap.get(file))
-									results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@"
+									results.add(file.FILE_NAME + "@@" + file.DESCRIPTION + "@@" + client.IP + "@@" + client.PORT_NUM + "@@"
 											+ client.USERNAME + "@@" + client.CONNECTION_TYPE);
 							}
 						}
@@ -130,6 +137,11 @@ class ClientHandler implements Runnable {
 						Net_Util.send(clientSocket, message);
 					}
 
+				}
+				if (command[0].startsWith("register")) {
+					for(NapFile f: Server.clientMap.keySet())
+						if(f.FILE_NAME.equals(command[1]))
+							registerFile( client, f);
 				}
 				if (command[0].startsWith("quit")) {
 					removeClient(client);
