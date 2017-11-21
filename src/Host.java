@@ -79,9 +79,9 @@ class Host extends JPanel {
 		errorDisplay = new JLabel("");
 		errorDisplay.setForeground(Color.RED);
 		serverName = new JTextField("localhost",20);
-		portNum = new JTextField("5509",10);
-		userName = new JTextField("WHYYYY",20);
-		hostName = new JTextField("AHHHHH",20);
+		portNum = new JTextField("6605",10);
+		userName = new JTextField("User1",20);
+		hostName = new JTextField("User1",20);
 		connectionType = new JComboBox<String>(CONN_TYPE);
 
 		connectButton = new JButton("Connect");
@@ -116,7 +116,7 @@ class Host extends JPanel {
 		JPanel tablePanel = new JPanel(new BorderLayout());
 		JPanel textPanel = new JPanel(new FlowLayout());
 
-		DefaultTableModel model=new DefaultTableModel(10,10);
+		DefaultTableModel model=new DefaultTableModel(1,1);
 
 		fileTable = new JTable(model);
 		clientTable = new JTable(model);
@@ -147,7 +147,7 @@ class Host extends JPanel {
 
 		tablePanel.add(fileScroll, BorderLayout.WEST);
 		tablePanel.add(clientScroll, BorderLayout.EAST);
-		tablePanel.add(getClientButton,BorderLayout.CENTER);
+		tablePanel.add(getClientButton,BorderLayout.SOUTH);
 
 		FilePane.add(textPanel, BorderLayout.NORTH);
 		FilePane.add(tablePanel, BorderLayout.CENTER);
@@ -271,6 +271,7 @@ class Host extends JPanel {
 						fileDisplay.setText(fileDisplay.getText()  + r + "\t\t");
 					Client c = new Client(InetAddress.getByName(split[2].substring(1)), Integer.parseInt(split[3]), split[4], split[5]);
 					NapFile f = new NapFile(split[0], split[1]);
+				
 					if (!files.contains(f)) {
 						files.add(f);
 					}

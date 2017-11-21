@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import javax.swing.table.*;
 
 class host1 extends JPanel {
 
@@ -36,6 +37,7 @@ class host1 extends JPanel {
 	private String[][] fileData;
 	private String[][] clientData;
 	private JButton searchButton;
+	private JButton getClientButton;
 
 	// These all belong to the Command Pane
 	private JTextField cmdField;
@@ -76,10 +78,10 @@ class host1 extends JPanel {
 
 		errorDisplay = new JLabel("");
 		errorDisplay.setForeground(Color.RED);
-		serverName = new JTextField(20);
-		portNum = new JTextField(10);
-		userName = new JTextField(20);
-		hostName = new JTextField(20);
+		serverName = new JTextField("localhost",20);
+		portNum = new JTextField("6605",10);
+		userName = new JTextField("User2",20);
+		hostName = new JTextField("User2",20);
 		connectionType = new JComboBox<String>(CONN_TYPE);
 
 		connectButton = new JButton("Connect");
@@ -114,10 +116,12 @@ class host1 extends JPanel {
 		JPanel tablePanel = new JPanel(new BorderLayout());
 		JPanel textPanel = new JPanel(new FlowLayout());
 
-		fileTable = new JTable();
-		clientTable = new JTable();
-		fileTable.setVisible(false);
-		clientTable.setVisible(false);
+		DefaultTableModel model=new DefaultTableModel(10,10);
+
+		fileTable = new JTable(model);
+		clientTable = new JTable(model);
+
+
 
 		searchButton = new JButton("Search");
 		searchButton.addActionListener(listen);
@@ -127,14 +131,24 @@ class host1 extends JPanel {
 		textPanel.add(searchField);
 		textPanel.add(searchButton);
 
-		//tablePanel.add(fileTable, BorderLayout.WEST);
-		//tablePanel.add(clientTable, BorderLayout.EAST);
+
 		fileDisplay = new JTextArea(100, 10);
 		fileDisplay.setEditable(false);
-		JScrollPane fileScroll = new JScrollPane(fileDisplay);
+		JScrollPane fileScroll = new JScrollPane(fileTable);
+		JScrollPane clientScroll = new JScrollPane(clientTable);
 
 		fileScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		tablePanel.add(fileDisplay);
+		clientScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		//tablePanel.add(fileDisplay);
+
+		getClientButton=new JButton("Get Clients");
+		getClientButton.addActionListener(listen);
+		getClientButton.setActionCommand("CLIENT");
+
+		tablePanel.add(fileScroll, BorderLayout.WEST);
+		tablePanel.add(clientScroll, BorderLayout.EAST);
+		tablePanel.add(getClientButton,BorderLayout.SOUTH);
+
 		FilePane.add(textPanel, BorderLayout.NORTH);
 		FilePane.add(tablePanel, BorderLayout.CENTER);
 
@@ -167,29 +181,75 @@ class host1 extends JPanel {
 	}
 
 	private void initFileTable(ArrayList<NapFile> fileList) {
-		fileData = new String[fileList.size()][2];
 
-		int i = 0;
-		for (NapFile n : fileList) {
-			fileData[i][0] = n.FILE_NAME;
-			fileData[i][1] = n.DESCRIPTION;
+		ArrayList<String[]> listOfFiles=new ArrayList<String[]>();
+
+		for(NapFile f:fileList){
+			//System.out.println("File: "+f);
+			String[] temp=new String[2];
+			temp[0]=f.FILE_NAME;
+			temp[1]=f.DESCRIPTION;
+			listOfFiles.add(temp);
+		}
+		String[][] output=new String[listOfFiles.size()][2];
+		int i=0;
+		for(String[] arr:listOfFiles){
+			output[i]=arr;
 			i++;
 		}
-		fileTable = new JTable(fileData, colNames);
+
+		DefaultTableModel model=new DefaultTableModel(output,colNames);
+
+		fileTable.setModel(model);
+		//ConnectPane.add(fileTable);
+		//fileTable.setVisible(true);
 
 	}
+	private ArrayList<Client> getClientsWithFile(NapFile file){
+		ArrayList<Client> out=new ArrayList<Client>();
 
-	private void initClientTable(ArrayList<Client> clientList) {
-		clientData = new String[clientList.size()][3];
-		int i = 0;
-		for (Client c : clientList) {
-			clientData[i][0] = c.CONNECTION_TYPE;
-			clientData[i][1] = c.USERNAME;
-			clientData[i][2] = c.IP.toString();
+		if(clientMap!=null){
+			for(NapFile f:clientMap.keySet()){
+				if(f.equals(file)){
+					out=clientMap.get(f);
+					break;
+				}
+			}
+			//out=clientMap.get(file);
+		}
+		return out;
+	}
 
+	private void initClientTable(NapFile file) {
+
+		ArrayList<Client> clientList=new ArrayList<Client>();
+
+		clientList=getClientsWithFile(file);
+
+		//System.out.println("Size: "+clientList.size());
+		ArrayList<String[]> clientArr=new ArrayList<String[]>();
+		for(Client c:clientList){
+			String[] temp=new String[3];
+
+			temp[0] = c.CONNECTION_TYPE;
+			temp[1] = c.USERNAME;
+			temp[2] = c.IP.toString();
+
+			clientArr.add(temp);
+		}
+		String[][] output=new String[clientArr.size()][3];
+		int i=0;
+		for(String[] arr:clientArr){
+			output[i]=arr;
 			i++;
 		}
-		clientTable = new JTable(clientData, clientColNames);
+
+		DefaultTableModel model=new DefaultTableModel(output,clientColNames);
+
+		clientTable.setModel(model);
+		//ConnectPane.add(fileTable);
+		//fileTable.setVisible(true);
+
 	}
 
 	private void search() {
@@ -224,6 +284,7 @@ class host1 extends JPanel {
 					fileDisplay.setText(fileDisplay.getText() + "\n");
 
 				}
+
 				initFileTable(files);
 			}
 		} catch (IOException e) {
@@ -306,6 +367,7 @@ class host1 extends JPanel {
 			switch (e.getActionCommand().toLowerCase()) {
 			case "connect":
 				if (connect()) {
+
 					errorDisplay.setText("");
 					makeFileList();
 					try {
@@ -314,7 +376,6 @@ class host1 extends JPanel {
 							sendFileList();
 							search();
 							cmdDisplay.setText(cmdDisplay.getText() + "\nRetrieve a file by typing: retr \"File Name\" \"Host Username\"");
-
 						} else {
 							errorDisplay.setText("Please Try Again");
 						}
@@ -330,6 +391,20 @@ class host1 extends JPanel {
 				break;
 			case "search":
 				search();
+				System.out.println();
+				break;
+			case "client":
+				int row=fileTable.getSelectedRow();
+				if(row==-1){
+					errorDisplay.setText("Please Select a File.");
+				}
+				else{
+				String name=(String)fileTable.getValueAt(row,0);
+				String desc=(String)fileTable.getValueAt(row,1);
+				NapFile file=new NapFile(name,desc);
+				initClientTable(file);
+				errorDisplay.setText("");
+				}
 				break;
 			case "command":
 				cmdDisplay.setText(cmdDisplay.getText() + "\n" + cmdField.getText());
@@ -340,6 +415,7 @@ class host1 extends JPanel {
 							for (Client c : clientMap.get(f)) {
 								if (c.USERNAME.equals(command[2])) {
 									requestFile(f, c);
+									System.out.println("file requested");
 								}
 							}
 						}
@@ -408,7 +484,6 @@ class host1 extends JPanel {
 				}
 			}
 		}
-		// initFileTable();
 	}
 
 	private boolean connect() {
@@ -456,6 +531,7 @@ class host1 extends JPanel {
 				BufferedReader bufRead = new BufferedReader(new InputStreamReader(reader));
 				String lineContent = bufRead.readLine();
 				while (null != lineContent) {
+					System.out.println(lineContent);
 					content.add(lineContent);
 					lineContent = bufRead.readLine();
 
