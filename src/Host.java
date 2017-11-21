@@ -375,6 +375,7 @@ class Host extends JPanel {
 							cmdDisplay.setText("Connected to server " + serverName.getText());
 							sendFileList();
 							search();
+							cmdDisplay.setText(cmdDisplay.getText() + "\nRetrieve a file by typing: retr \"File Name\" \"Host Username\"");
 						} else {
 							errorDisplay.setText("Please Try Again");
 						}
@@ -483,7 +484,6 @@ class Host extends JPanel {
 				}
 			}
 		}
-		// initFileTable();
 	}
 
 	private boolean connect() {

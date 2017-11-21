@@ -1,2 +1,3 @@
 d.txt::test file d
 e.txt::another test
+b.txt::test file b

@@ -306,7 +306,6 @@ class host1 extends JPanel {
 			switch (e.getActionCommand().toLowerCase()) {
 			case "connect":
 				if (connect()) {
-
 					errorDisplay.setText("");
 					makeFileList();
 					try {
@@ -314,6 +313,8 @@ class host1 extends JPanel {
 							cmdDisplay.setText("Connected to server " + serverName.getText());
 							sendFileList();
 							search();
+							cmdDisplay.setText(cmdDisplay.getText() + "\nRetrieve a file by typing: retr \"File Name\" \"Host Username\"");
+
 						} else {
 							errorDisplay.setText("Please Try Again");
 						}
@@ -329,7 +330,6 @@ class host1 extends JPanel {
 				break;
 			case "search":
 				search();
-				System.out.println();
 				break;
 			case "command":
 				cmdDisplay.setText(cmdDisplay.getText() + "\n" + cmdField.getText());
@@ -340,7 +340,6 @@ class host1 extends JPanel {
 							for (Client c : clientMap.get(f)) {
 								if (c.USERNAME.equals(command[2])) {
 									requestFile(f, c);
-									System.out.println("file requested");
 								}
 							}
 						}
@@ -457,7 +456,6 @@ class host1 extends JPanel {
 				BufferedReader bufRead = new BufferedReader(new InputStreamReader(reader));
 				String lineContent = bufRead.readLine();
 				while (null != lineContent) {
-					System.out.println(lineContent);
 					content.add(lineContent);
 					lineContent = bufRead.readLine();
 
