@@ -101,8 +101,8 @@ class ClientHandler implements Runnable {
 		ArrayList<String> results;
 		while (running) {
 			try {
-				command = Net_Util.recString(clientSocket).split(" ");
-				System.out.println(command.length);
+				String command1 = Net_Util.recString(clientSocket);
+				command = command1.split(" ");
 				if (command[0].startsWith("search")) {
 					results = new ArrayList<String>();
 					if (command.length == 1) {
@@ -113,7 +113,6 @@ class ClientHandler implements Runnable {
 							}
 						}
 					} else {
-						System.out.println("2 args");
 						for (NapFile file : Server.clientMap.keySet()) {
 							if (file.DESCRIPTION.contains(command[1])) {
 								for (Client client : Server.clientMap.get(file))
@@ -122,7 +121,6 @@ class ClientHandler implements Runnable {
 							}
 						}
 					}
-
 					if (results.isEmpty()) {
 						String[] message = { "No results found" };
 						Net_Util.send(clientSocket, message);
@@ -130,10 +128,8 @@ class ClientHandler implements Runnable {
 						int i = 0;
 						String[] message = new String[results.size()];
 						for (String s : results) {
-							System.out.println(s);
 							message[i++] = s;
 						}
-						System.out.println();
 						Net_Util.send(clientSocket, message);
 					}
 
@@ -144,6 +140,7 @@ class ClientHandler implements Runnable {
 							registerFile( client, f);
 				}
 				if (command[0].startsWith("quit")) {
+					System.out.println(client.USERNAME + " has disconnected.");
 					removeClient(client);
 					clientSocket.close();
 					running = false;

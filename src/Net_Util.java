@@ -254,15 +254,16 @@ class Net_Util {
 
 	public static String recString(Socket inSocket) throws IOException {
 		String type = "STRING";
+		System.out.println("trying to recieve string");
 		BufferedReader in = getReader(inSocket);
 		String[] tokens;
 		tokens = in.readLine().split("::");
+		System.out.println(tokens.length);
 		if (!type.equals(tokens[0])) {
 			System.out.println("Wrong type recieved. Expected " + type + ". Recieved" + tokens[0]);
-			System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName());
-			System.out.println(Thread.currentThread().getStackTrace()[2].getMethodName());
 			return null;
 		}
+		System.out.println(tokens[1]);
 		return tokens[1];
 	}
 
